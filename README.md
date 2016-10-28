@@ -1,2 +1,2 @@
-# Assembler [Not In Current Working Condition 10/27/2016]
+# Assembler [Currently Does Nothing]
 Final Project for CMPS 361: Software Design
