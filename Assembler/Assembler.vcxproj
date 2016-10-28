@@ -111,10 +111,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Assem.cpp" />
+    <ClCompile Include="Assembler.cpp" />
+    <ClCompile Include="FileAccess.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SymbTab.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assembler.h" />
+    <ClInclude Include="Emulator.h" />
+    <ClInclude Include="Errors.h" />
+    <ClInclude Include="FileAccess.h" />
+    <ClInclude Include="Instruction.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SymTab.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
