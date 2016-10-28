@@ -32,6 +32,7 @@ void Assembler::PassI()
 			// We will let this error be reported by Pass II.
 			return;
 		}
+		/*
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
@@ -44,7 +45,7 @@ void Assembler::PassI()
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr)
 		{
 			continue;
-		}
+		}*/
 		// If the instruction has a label, record it and its location in the
 		// symbol table.
 		if (m_inst.isLabel()) {
@@ -52,6 +53,6 @@ void Assembler::PassI()
 			m_symtab.AddSymbol(m_inst.GetLabel(), loc);
 		}
 		// Compute the location of the next instruction.
-		loc = m_inst.LocationNextInstruction(loc);
+		//loc = m_inst.LocationNextInstruction(loc);
 	}
 }
