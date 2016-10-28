@@ -1,3 +1,14 @@
+//###################################################################
+//Name		:	Amanda Steidl
+//Course	:	CMPS361 - Software Design
+//Project	:	Assembler
+//Instructor:	Professor Victor Miller
+//###################################################################
+//Current File	:			Instruction.h
+//###################################################################
+
+
+
 #pragma once
 //
 // Class to parse and provide information about instructions.  Note: you will be adding more functionality.

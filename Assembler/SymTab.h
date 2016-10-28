@@ -1,3 +1,14 @@
+//###################################################################
+//Name		:	Amanda Steidl
+//Course	:	CMPS361 - Software Design
+//Project	:	Assembler
+//Instructor:	Professor Victor Miller
+//###################################################################
+//Current File	:			SymTab.h
+//###################################################################
+
+
+
 //
 //		Symbol table class.
 //

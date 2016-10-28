@@ -1,3 +1,14 @@
+//###################################################################
+//Name		:	Amanda Steidl
+//Course	:	CMPS361 - Software Design
+//Project	:	Assembler
+//Instructor:	Professor Victor Miller
+//###################################################################
+//Current File	:			Errors.h
+//###################################################################
+
+
+
 //
 // Class to manage error reporting. Note: all members are static so we can access them anywhere.
 // What other choices do we have to accomplish the same thing?

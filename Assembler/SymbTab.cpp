@@ -1,3 +1,14 @@
+//###################################################################
+//Name		:	Amanda Steidl
+//Course	:	CMPS361 - Software Design
+//Project	:	Assembler
+//Instructor:	Professor Victor Miller
+//###################################################################
+//Current File	:			SymbTab.cpp
+//###################################################################
+
+
+
 //
 //		Implementation of the symbol table class.
 //

@@ -1,3 +1,14 @@
+//###################################################################
+//Name		:	Amanda Steidl
+//Course	:	CMPS361 - Software Design
+//Project	:	Assembler
+//Instructor:	Professor Victor Miller
+//###################################################################
+//Current File	:			Assembler.h
+//###################################################################
+
+
+
 #pragma once
 //
 //		Assembler class.  This is a container for all the components
