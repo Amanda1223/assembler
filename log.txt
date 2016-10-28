@@ -1,0 +1,6 @@
+#Log
+10/27/2016
+
+    Moved each file into a Visual Studio project
+    Commented out the necessary code to have an 'error free' program that does absolutely nothing.
+    Added comments as a header to each file.
