@@ -13,7 +13,6 @@
 //
 // Class to parse and provide information about instructions.  Note: you will be adding more functionality.
 //
-#pragma once
 
 // The elements of an instruction.
 class Instruction {

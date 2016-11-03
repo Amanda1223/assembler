@@ -15,7 +15,25 @@
 #include "stdafx.h"
 #include "FileAccess.h"
 
-// Don't forget to comment the function headers.
+/*##################################################################
+#	NAME
+#		FileAccess::FileAccess
+#
+#	SYNOPSIS
+#		FileAccess::FileAccess(int argc, char *argv[]);
+#
+#			argc	--> number of arguments within the command line
+#			argv	-->	file name input by the user
+#
+#	DESCRIPTION
+#		This constructor attempts to open the file from a command
+#		line argument. If it could not be opened or if the file does
+#		not exist, it will exit the program.
+#
+#	RETURNS
+#		((none))
+#
+##################################################################*/
 FileAccess::FileAccess(int argc, char *argv[])
 {
 	// Check that there is exactly one run time parameter.
@@ -34,6 +52,7 @@ FileAccess::FileAccess(int argc, char *argv[])
 		exit(1);
 	}
 }
+
 FileAccess::~FileAccess()
 {
 	m_sfile.close();
@@ -54,12 +73,6 @@ FileAccess::~FileAccess()
 #	RETURNS
 #		Returns true indicating success, and false if there
 #		is no more data in the file.
-#
-#	AUTHOR
-#	???
-#
-#	DATE
-#		10:06pm	11/02/2016
 #
 ##################################################################*/
 bool FileAccess::GetNextLine(string &a_buff)
@@ -86,12 +99,6 @@ bool FileAccess::GetNextLine(string &a_buff)
 #
 #	RETURNS
 #		((void))
-#
-#	AUTHOR
-#	???
-#
-#	DATE
-#		10:12pm	11/02/2016
 #
 ##################################################################*/
 void FileAccess::rewind()
