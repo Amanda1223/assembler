@@ -38,15 +38,15 @@ void Assembler::PassI()
 		// Read the next line from the source file.
 		string buff;
 		if (!m_facc.GetNextLine(buff)) {
-
 			// If there are no more lines, we are missing an end statement.
 			// We will let this error be reported by Pass II.
 			return;
 		}
-		/*
+		
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
+		/*
 		// If this is an end statement, there is nothing left to do in pass I.
 		// Pass II will determine if the end is the last statement.
 		if (st == Instruction::ST_End) return;

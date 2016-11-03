@@ -38,19 +38,62 @@ FileAccess::~FileAccess()
 {
 	m_sfile.close();
 }
-// Get the next line from the file.
+/*##################################################################
+#	NAME
+#		FileAccess::GetNextLine
+#
+#	SYNOPSIS
+#		bool FileAccess::GetNextLine(string &a_buff);
+#
+#			a_buff	--> a single line within the file that was opened.
+#
+#	DESCRIPTION
+#		This function attempts to read a line from the open file,
+#		if it is at the end of the file then nothing will be read in.
+#
+#	RETURNS
+#		Returns true indicating success, and false if there
+#		is no more data in the file.
+#
+#	AUTHOR
+#	???
+#
+#	DATE
+#		10:06pm	11/02/2016
+#
+##################################################################*/
 bool FileAccess::GetNextLine(string &a_buff)
 {
-	// If there is no more data, return false.
+	//Reached end-of-file | there's no more data to be read
 	if (m_sfile.eof()) {
-
 		return false;
 	}
 	getline(m_sfile, a_buff);
 
-	// Return indicating success.
+	//Return indicating succes; file string read into a_buff.
 	return true;
 }
+
+/*##################################################################
+#	NAME
+#		FileAccess::rewind
+#
+#	SYNOPSIS
+#		void FileAccess::rewind();
+#
+#	DESCRIPTION
+#		This function
+#
+#	RETURNS
+#		((void))
+#
+#	AUTHOR
+#	???
+#
+#	DATE
+#		10:12pm	11/02/2016
+#
+##################################################################*/
 void FileAccess::rewind()
 {
 	// Clean tall file flags and go back to the beginning of the file.
