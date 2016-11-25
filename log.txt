@@ -4,3 +4,58 @@
     Moved each file into a Visual Studio project
     Commented out the necessary code to have an 'error free' program that does absolutely nothing.
     Added comments as a header to each file.
+
+11/2/2016 - 11/3/2016
+
+    Added Instruction.cpp
+    Commented the FileAccess.cpp according to documentation specifications.
+    Considering how to tackle Instuction.cpp
+	(i)	Commented line
+		(a)	At the end of the line...
+		(b)	On a line of it's own...
+	(ii)	Machine Language Instruction
+		(a) ADD | SUB | MULT | DIV | LOAD | STORE | READ | WRITE | B | BM |BZ |BP | HALT
+			(1) translate to 01-13 respectively.
+		(b) Where are we storing the OP Code? Should I make an enum for this?
+	(iii)	Assembly Language instruction
+		(a) DC | DS | ORG | END
+	(iv)	Labels!
+		(a) Has to be within the first "column" [use counter for this :: # of words read from the line]
+		(b) if not, there *should not* be a label [if there is, either misplaced comment or incorrect (ERROR)].
+
+    Data structures to consider ("helpful" structures):
+	vector<pair<enum, "string">>	:: preventing a long if-else statement (condense to a for-loop)
+					:: holding the enum / "opcode" [01-13] equivalent of the instruction ("helpful")
+	arrays	for machine_type | assembly	:: preventing extensive if-else [no opcode:: 000]
+
+    Questions to consider:
+	#1	:	Separate parts (i-iv) into different private member functions?	Yes, for Assem | Machine
+	#2	:	Upon finding type, what needs to be stored based on that type? (check symbole table | pass1 v pass2)
+
+    ##Work In Progress##
+	(A)CLASS:    Instruction.cpp
+			FUNCTIONS:	Instruction::InstructionType Instruction::ParseInstruction(string &a_buff);
+					bool Instruction::isAssemInstruct(string &a_section, int &a_count);
+					bool Instruction::isMachineInstruct(string &a_section, int &a_count);
+	   HEADER:   Instruction.h
+			ADDITIONS:	vector for a list of machine instructions,
+					vector for a list of assembly instructions,
+					number of op_codes(machine) constant,
+    ##Testing##
+	;comments! with blank space before /t and ' '.
+	Single-line (first line in the file, nothing after) :: WORKS!
+	Multiple-lines of comments (varying spacing) :: WORKS!
+	*For comments on their own line!
+
+	Machine! works with the blank space in front
+	Successfully stores the numerical and string value of the opCode
+	(opcode only, no other information)
+
+	Assembly! works with blank space in front
+	Successfully stores the string value of the opCode
+	
+
+	These tests are only for JUST the instruction : ensuring the comparisons were working.
+	Can mix and match instructions on their own lines and it will still work.
+
+	NOTE ::	need to make something to handle empty strings.

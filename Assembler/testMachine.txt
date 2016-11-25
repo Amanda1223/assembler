@@ -1,0 +1,17 @@
+;first line comment
+	ADD
+	SUB
+BP
+	HALT
+;stooof
+	WRITE
+	B
+	BM
+MULT
+	DIV
+	LOAD
+STORE
+	READ
+	BZ
+;more stoof
+	

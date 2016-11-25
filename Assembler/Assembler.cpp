@@ -27,12 +27,29 @@ Assembler::Assembler(int argc, char *argv[])
 Assembler::~Assembler()
 {
 }
-// Pass I establishes the location of the labels.  You will write better function comments according to the coding standards.
+
+/*##################################################################
+#	NAME
+#		void Assembler::PassI
+#
+#	SYNOPSIS
+#		void Assembler::PassI();
+#
+#	DESCRIPTION
+#		This function is responsible for:
+#			
+#
+#	RETURNS
+#		Returns true upon matching the section with an assembler instruction,
+#		false if not found (not an assembler instruction).
+#
+##################################################################*/
 void Assembler::PassI()
 {
+		//hello
 	int loc = 0;        // Tracks the location of the instructions to be generated.
 
-						// Successively process each line of source code.
+	// Successively process each line of source code.
 	for (; ; ) {
 
 		// Read the next line from the source file.
@@ -46,21 +63,18 @@ void Assembler::PassI()
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
-		/*
+		
 		// If this is an end statement, there is nothing left to do in pass I.
 		// Pass II will determine if the end is the last statement.
 		if (st == Instruction::ST_End) return;
 
 		// Labels can only be on machine language and assembler language
 		// instructions.  So, skip other instruction types.
-		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr)
-		{
-			continue;
-		}*/
+		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) continue;
+
 		// If the instruction has a label, record it and its location in the
 		// symbol table.
 		if (m_inst.isLabel()) {
-
 			m_symtab.AddSymbol(m_inst.GetLabel(), loc);
 		}
 		// Compute the location of the next instruction.
