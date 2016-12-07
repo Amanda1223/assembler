@@ -21,12 +21,14 @@
 Assembler::Assembler(int argc, char *argv[])
 	: m_facc(argc, argv)
 {
-	// Nothing else to do here at this point.
 }
-// Destructor currently does nothing.  You might need to add something as you develope this project.
+/*Assembler::Assembler(int argc, char *argv[]);*/
+
+// Destructor currently does nothing.  You might need to add something as you develop this project.
 Assembler::~Assembler()
 {
 }
+/*Assembler::~Assembler();*/
 
 /*##################################################################
 #	NAME
@@ -36,12 +38,11 @@ Assembler::~Assembler()
 #		void Assembler::PassI();
 #
 #	DESCRIPTION
-#		This function is responsible for:
+#		This function is responsible for identifying the instruction
+#		type as well as beginning the symbol table to prep Pass II. 
 #			
-#
 #	RETURNS
-#		Returns true upon matching the section with an assembler instruction,
-#		false if not found (not an assembler instruction).
+#		((void))
 #
 ##################################################################*/
 void Assembler::PassI()
@@ -78,6 +79,7 @@ void Assembler::PassI()
 			m_symtab.AddSymbol(m_inst.GetLabel(), loc);
 		}
 		// Compute the location of the next instruction.
-		//loc = m_inst.LocationNextInstruction(loc);
+		loc = m_inst.LocationNextInstruction(loc);
 	}
 }
+/*void Assembler::PassI();*/

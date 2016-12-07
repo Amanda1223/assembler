@@ -26,12 +26,17 @@
 #
 ##################################################################*/
 Instruction::Instruction() {
+	clearInfo();
+}
+/*Instruction::Instruction();*/
+
+void Instruction::clearInfo() {
 	//all strings can be checked using .empty ::
 	m_Label = "";
 	m_OpCode = "";
 	m_Operand = "";
 	m_instruction = "";
-	
+
 	//numerical value outside the valid opcodes (-1)
 	m_NumOpCode = -1;
 	m_OperandValue = -1;
@@ -41,7 +46,6 @@ Instruction::Instruction() {
 
 	//assume blank or commented first line.
 	m_type = ST_Comment;
-	
 }
 
 /*##################################################################
@@ -65,58 +69,67 @@ Instruction::Instruction() {
 #
 ##################################################################*/
 Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
+	clearInfo();
 	if (a_buff.empty()) {
 		return m_type;
 	}
 	m_instruction = a_buff;
-	
-	//storage for the single phrases/words within the buffer
-	string orig_part = "";
-	string tmp_copy = "";
+	string orig_part = ""; //storage for the single phrases/words within the buffer
+	string tmp_copy = ""; //copy for comparison purposes. (will use this only for uppercase copies)
+	int count = 1; //count for each loop iteration [assuming 3 (w/o end comments)]
 
-	//in order to skip parsing if found correct instruction type
-	bool skip;
+	cout << a_buff << endl;
 
-	//count for each loop iteration [assuming 3 (w/o end comments)]
-	int count = 1;
-	cout << "Line  :: " << a_buff << endl;
-	//examine each word on the line [determine instuction.]
+	//store each relevant segment on the line (parse out comments)
 	std::istringstream singleOut(a_buff);
+	vector <string> lineSegment;
 	while (singleOut >> orig_part) {
-		skip = false;
-		
-		//determine IF comment begin [should immediately return the previous value]
-		if (orig_part[0] == ';') {
-			cout << "AYYY dis be a comment!" << endl;
-			//check if it's only the first "word" in the file, if it is then the WHOLE line is a comment
-			//else it would be at the end, and we can "ignore it"
-			if (count == 1) {
-				m_type = ST_Comment;
-			}
-		}
-	
-		//convert the orig_part to uppercase in a separate string, then compare
-		tmp_copy = orig_part;
-		transform(tmp_copy.begin(), tmp_copy.end(), tmp_copy.begin(), toupper);
+		checkComment(orig_part);
 
-		//determine IF machine language
-		skip = isMachineInstruct(tmp_copy, count);
-		if (skip) continue;
-
-		//determine ELSE IF assembly language
-		skip = isAssemInstruct(tmp_copy, count);
-		if (skip) continue;
-
-		//determine ELSE IF label [count is equivalent to "column" labels are within first column]
-		//if (count == 1) {
-			//"first column" therefore label.. we hope.
-			//m_Label = orig_part;
-		//}
-		count++;
+		//parsed out comments, therefore possibility of "emptiness" :: comments at end will no longer be within the line
+		if (!orig_part.empty()) lineSegment.push_back(orig_part);
 	}
-	
-	return m_type;
 
+	//IF the lineSegment vector is empty, we had a comment on the beginning of the line
+	if (lineSegment.empty()) return m_type;
+	bool isAssem = false, isMach = false;
+	for (int column = 1; column <= lineSegment.size(); column++) {
+		
+		//Comments already done.
+		tmp_copy = lineSegment.at(column - 1);
+		transform(tmp_copy.begin(), tmp_copy.end(), tmp_copy.begin(), toupper);
+		if (column == 1 && lineSegment.size() == 3) {
+
+			//assume label is first? "3 columns" normally consist of LABEL | INST | OPERAND
+			//this could be a potential issue in Error checking.
+			m_Label = lineSegment.at(column - 1);
+			continue;
+		}
+
+		//determining these later orig INIT to FALSE, changes upon later if-elseif :: therefore the column will be incremented for the operand
+		if (isMach) {
+			m_Operand = lineSegment.at(column - 1);
+			m_IsNumericOperand = false;
+			isMach = false;
+			continue;
+		}
+		else if (isAssem) {
+			m_Operand = lineSegment.at(column - 1);
+
+			//assuming numeric will always be true in an assembly language
+			m_IsNumericOperand = true;
+			m_OperandValue = stoi(lineSegment.at(column - 1));
+			isAssem = false;
+			continue;
+		}
+		if (isMach = isMachineInstruct(tmp_copy)) {
+			continue;
+		}
+		else if (isAssem = isAssemInstruct(tmp_copy)) {
+			continue;
+		}
+	}
+	return m_type;
 }
 /*Instruction::InstructionType Instruction::ParseInstruction(string &a_buff);*/
 
@@ -126,7 +139,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 #		bool Instruction::isAssemInstruct
 #
 #	SYNOPSIS
-#		bool Instruction::isAssemInstruct(string &a_section, int &a_count);
+#		bool Instruction::isAssemInstruct(const string &a_section, int &a_count);
 #
 #			a_section	--> a piece of the line (parsed out by spaces)
 #			a_count		--> "column" counter / word counter.
@@ -140,33 +153,46 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 #		false if not found (not an assembler instruction).
 #
 ##################################################################*/
-bool Instruction::isAssemInstruct(string &a_section, int &a_count) {
-	for (int i = 0; i < m_AssemList.size(); i++) {
-		if (m_AssemList[i].second != a_section) continue;
-		else {
+bool Instruction::isAssemInstruct(const string &a_section, int &a_count) {
+	auto it = m_AssemList.find(a_section);
+	if (it != m_AssemList.end()) {
+		
+		//found the opcode string
+		m_OpCode = it->first;
+		m_NumOpCode = 0; //AL does not have opcodes
+		if (it->second == AT_END) m_type = ST_End;
+		else m_type = ST_AssemblerInstr;
+		if (a_count = 1) {
 
-			//Conclusion: is an assembler instruction
-			//reached the matching assembly string set necessary values
-			m_OpCode = m_AssemList[i].second;
-			cout << "[string] opcode: "<< m_OpCode << endl;
-			m_NumOpCode = 0;
-			if (m_AssemList[i].first == AT_END) m_type = ST_End;
-			else m_type = ST_AssemblerInstr;
-			a_count++;
-			return true;
+			//"no label" case
+			a_count += 1;
 		}
+		return true;
 	}
 	return false;
 }
-/*bool Instruction::isAssemInstruct(string &a_section, int &a_count);*/
+/*bool Instruction::isAssemInstruct(const string &a_section, int &a_count);*/
 
+bool Instruction::isAssemInstruct(const string &a_segment) {
+	auto it = m_AssemList.find(a_segment);
+	if (it != m_AssemList.end()) {
+
+		//found the opcode string
+		m_OpCode = it->first;
+		m_NumOpCode = 0; //AL does not have opcodes
+		if (it->second == AT_END) m_type = ST_End;
+		else m_type = ST_AssemblerInstr;
+		return true;
+	}
+	return false;
+}
 
 /*##################################################################
 #	NAME
 #		bool Instruction::isMachineInstruct
 #
 #	SYNOPSIS
-#		bool Instruction::isMachineInstruct(string &a_section, int &a_count);
+#		bool Instruction::isMachineInstruct(const string &a_section, int &a_count);
 #
 #			a_section	--> a piece of the line (parsed out by spaces)
 #			a_count		--> "column" counter / word counter.
@@ -180,21 +206,99 @@ bool Instruction::isAssemInstruct(string &a_section, int &a_count) {
 #		false if not found (not a machine instruction).
 #
 ##################################################################*/
-bool Instruction::isMachineInstruct(string &a_section, int &a_count) {
-	for (int i = 0; i < m_NUM_OPCODE; i++) {
-		if (m_MachList[i].second != a_section) continue;
-		else {
-
-			//reached the matching mach string set the opcode string & integer value
-			m_OpCode = m_MachList[i].second;
-			cout << "[string] Op-code : " << m_OpCode << endl;
-			m_NumOpCode = m_MachList[i].first;
-			cout << "[int] OpCode : " << m_NumOpCode << endl;
-			m_type = ST_MachineLanguage;
+bool Instruction::isMachineInstruct(const string &a_section, int &a_count) {
+	auto it = m_MachList.find(a_section);
+	if (it != m_MachList.end()) {
+		m_OpCode = it->first;
+		m_NumOpCode = it->second; //second value stored is the ML value
+		m_type = ST_MachineLanguage;
+		if (a_count == 1) {
 			a_count++;
-			return true;
+		}
+		return true;
+	}
+	else return false;
+}
+/*bool Instruction::isMachineInstruct(const string &a_section, int &a_count);*/
+
+bool Instruction::isMachineInstruct(const string &a_segment) {
+	auto it = m_MachList.find(a_segment);
+	if (it != m_MachList.end()) {
+		m_OpCode = it->first;
+		m_NumOpCode = it->second; //second value stored is the ML value
+		m_type = ST_MachineLanguage;
+		return true;
+	}
+	else return false;
+}
+
+
+/*##################################################################
+#	NAME
+#		void Instruction::checkComment
+#
+#	SYNOPSIS
+#		void Instruction::checkComment(string &a_section);
+#
+#			a_section	--> a piece of the line (parsed out by spaces)
+#
+#	DESCRIPTION
+#		This function is responsible for checking if there is a comment
+#		in the middle of a "phrase" ie if the user placed a comment next to
+#		an operand or a language operation.
+#
+#	RETURNS
+#		((void))
+#
+##################################################################*/
+void Instruction::checkComment(string &a_section) {
+
+	//check if the "single word" is attached to a comment!
+	auto commentSplit = a_section.find(";");
+	if (commentSplit != string::npos) {
+
+		//there was a comment found, parse the string
+		a_section = a_section.substr(0, commentSplit);
+
+		//empty string if ; was at the beginning.
+		return;
+	}
+	return;
+}
+/*void Instruction::checkComment(string &a_section);*/
+
+/*##################################################################
+#	NAME
+#		int Instruction::LocationNextInstruction
+#
+#	SYNOPSIS
+#		int Instruction::LocationNextInstruction(int a_loc);
+#
+#			a_loc	--> location of instruction
+#
+#	DESCRIPTION
+#		This function is responsible for determining the upcoming instruction
+#		location, whether it was marked by an instruction, or 
+#		just a line incrementation.
+#
+#	RETURNS
+#		Returns the INTEGER value of the next instruction.
+#
+##################################################################*/
+int Instruction::LocationNextInstruction(int a_loc) {
+	if (m_type == ST_AssemblerInstr && !m_Operand.empty()) {
+		//should look for the location @m_OPCode
+		if (m_AssemList.at(m_OpCode) == AT_ORG) {
+
+			//ORG tells us WHERE to go.
+			if (m_IsNumericOperand) return m_OperandValue;
+		}
+		else if (m_AssemList.at(m_OpCode) == AT_DS) {
+
+			//adding "space" therefore INCREASE the location by the operand value
+			if (m_IsNumericOperand) return a_loc + m_OperandValue;
 		}
 	}
-	return false;
+	return a_loc + 1;
 }
-/*bool isMachineInstruct(string &a_section, int &a_count);*/
+/*int Instruction::LocationNextInstruction(int a_loc);*/

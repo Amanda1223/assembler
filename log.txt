@@ -59,3 +59,102 @@
 	Can mix and match instructions on their own lines and it will still work.
 
 	NOTE ::	need to make something to handle empty strings.
+
+11/25/2016
+
+   Began considering the symbol class, uncommented the corresponding code in Assembly.cpp
+
+12/1/2016
+
+   Working on the symbol table display functionality.
+   Thoughts on Instruction class:
+	boolean value for isNumericOperand, should be only in the "3rd column" .. Require lookup in symbol table?
+	integer value for numericOperand, should be only in the "3rd column" assigned when you have a "variable" in its place
+		or when the value is explicitly given (ie ORG)
+   Need to implement: 	(1) finding whether an instruction is a numerical value.
+			(2) finding the next instruction location (which requires me to do (1).
+
+12/3/2016
+
+   Realized last log entry I was making things much more complicated than need be, therefore,
+	I'm taking a break a bit and using a different data structure for instruction lookup.
+	- used to be VECTOR < MachineOpCode, string > m_MachList
+	- merging to UNORDERED_MAP < string, MachineOpCode > m_MachList
+
+   In doing this, need to restructure the isAssemInstruct && isMachInstruct functions.
+
+
+BEFORE: 
+bool Instruction::isAssemInstruct(const string &a_section, int &a_count) {
+
+	
+
+	for (int i = 0; i < m_AssemList.size(); i++) {
+		if (m_AssemList[i].second != a_section) continue;
+		else {
+
+			//Conclusion: is an assembler instruction
+			//reached the matching assembly string set necessary values
+			m_OpCode = m_AssemList[i].second;
+			cout << "[string] opcode: "<< m_OpCode << endl;
+			m_NumOpCode = 0;
+			if (m_AssemList[i].first == AT_END) m_type = ST_End;
+			else m_type = ST_AssemblerInstr;
+
+			if (a_count == 1) {
+
+				//increase column count because we're technically in "column two"
+				a_count++;
+			}
+			return true;
+		}
+	}
+
+	//will not increment count on FALSE
+	return false;
+}
+
+AFTER:
+bool Instruction::isAssemInstruct(const string &a_section, int &a_count) {
+	auto it = m_AssemList.find(a_section);
+	if (it != m_AssemList.end()) {
+		
+		//found the opcode string
+		m_OpCode = it->first;
+		m_NumOpCode = 0; //AL does not have opcodes
+		if (it->second == AT_END) m_type = ST_End;
+		else m_type = ST_AssemblerInstr;
+		if (a_count = 1) {
+			a_count += 1;
+		}
+		return true;
+	}
+	return false;
+}
+
+
+   Accomplished : - Fixing the operand variables and obtaining values. Upon doing so, began creating a list of questions for Miller about the specs.
+		  - Finished LocationNextInstruction, **testing required.
+
+12/4/2016
+
+Building and testing the project for specifically the instruction types and what is being held in the variables at the end of each line read.
+	Will be doing this for each line, and then testing the symbol table display as well as variable location testing. (declarations)
+
+Minor error noticed in Instruction::ParseInstruction(...) : 
+	(1) [FIXED with Instruction::checkComment(string &a_section)]
+		When comment occured directly after an operand, the operand + comment was in the string while parsing the line.
+Minor error within debugger to consider:
+	(1) 'Instruction::LocationNextInstruction': not all control paths return a value
+
+12/5/2016
+
+Fixed the debugger error from yesterday (was unhappy about an if else case). Simply ended function with return loc + 1;
+
+Finishing up testing on PassI :: Symbol table printing correctly, parsing each line... except one.
+
+BUGS:
+	(1) When testing, would read through each line and correctly store the value and location except label B, which happens
+		to occur after the *only* ds statement. Looking into this...
+	    Found answer : the parser believes "b" is an assembly instruction! Oh dear...
+	  POSSIBLE FIX (needs testing) re-wrote the parseinstruction re-organizing the code and putting relevant LABEL | INSTR | OPERAND within a vector for each line.
