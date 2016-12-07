@@ -22,7 +22,7 @@
 #		in order to compare later on for opcodes and labels.
 #
 #	RETURNS
-#		((none))
+#		((void))
 #
 ##################################################################*/
 Instruction::Instruction() {
@@ -30,6 +30,22 @@ Instruction::Instruction() {
 }
 /*Instruction::Instruction();*/
 
+
+/*##################################################################
+#	NAME
+#		void Instruction::clearInfo
+#
+#	SYNOPSIS
+#		void Instruction::clearInfo()
+#
+#	DESCRIPTION
+#		Resets the variables to a "blank" value for the current line instruction
+#		at hand. Therefore, not old values are placed in the wrong line instruction.
+#
+#	RETURNS
+#		((none))
+#
+##################################################################*/
 void Instruction::clearInfo() {
 	//all strings can be checked using .empty ::
 	m_Label = "";
@@ -47,6 +63,7 @@ void Instruction::clearInfo() {
 	//assume blank or commented first line.
 	m_type = ST_Comment;
 }
+/*void Instruction::clearInfo();*/
 
 /*##################################################################
 #	NAME
@@ -74,30 +91,25 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 		return m_type;
 	}
 	m_instruction = a_buff;
-	string orig_part = ""; //storage for the single phrases/words within the buffer
-	string tmp_copy = ""; //copy for comparison purposes. (will use this only for uppercase copies)
+	string segment = ""; //storage for the single phrases/words within the buffer
 	int count = 1; //count for each loop iteration [assuming 3 (w/o end comments)]
 
-	cout << a_buff << endl;
-
 	//store each relevant segment on the line (parse out comments)
-	std::istringstream singleOut(a_buff);
+	std::istringstream singleOut(m_instruction);
 	vector <string> lineSegment;
-	while (singleOut >> orig_part) {
-		checkComment(orig_part);
+	while (singleOut >> segment) {
+		checkComment(segment);
 
 		//parsed out comments, therefore possibility of "emptiness" :: comments at end will no longer be within the line
-		if (!orig_part.empty()) lineSegment.push_back(orig_part);
+		if (!segment.empty()) lineSegment.push_back(segment);
 	}
 
 	//IF the lineSegment vector is empty, we had a comment on the beginning of the line
 	if (lineSegment.empty()) return m_type;
 	bool isAssem = false, isMach = false;
 	for (int column = 1; column <= lineSegment.size(); column++) {
-		
-		//Comments already done.
-		tmp_copy = lineSegment.at(column - 1);
-		transform(tmp_copy.begin(), tmp_copy.end(), tmp_copy.begin(), toupper);
+		segment = lineSegment.at(column - 1);
+		transform(segment.begin(), segment.end(), segment.begin(), toupper);
 		if (column == 1 && lineSegment.size() == 3) {
 
 			//assume label is first? "3 columns" normally consist of LABEL | INST | OPERAND
@@ -122,10 +134,10 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			isAssem = false;
 			continue;
 		}
-		if (isMach = isMachineInstruct(tmp_copy)) {
+		if (isMach = isMachineInstruct(segment)) {
 			continue;
 		}
-		else if (isAssem = isAssemInstruct(tmp_copy)) {
+		else if (isAssem = isAssemInstruct(segment)) {
 			continue;
 		}
 	}
@@ -139,40 +151,21 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 #		bool Instruction::isAssemInstruct
 #
 #	SYNOPSIS
-#		bool Instruction::isAssemInstruct(const string &a_section, int &a_count);
+#		bool Instruction::isAssemInstruct(const string &a_segment);
 #
-#			a_section	--> a piece of the line (parsed out by spaces)
-#			a_count		--> "column" counter / word counter.
+#			a_segment	--> a piece of the line (parsed out by spaces)
 #
 #	DESCRIPTION
 #		This function is responsible for determining whether this is an
-#		assembler instruction by comparing it to the strings of assembler list
+#		assembler instruction by comparing it to the strings of assembler list.
 #
 #	RETURNS
-#		Returns true upon matching the section with an assembler instruction,
-#		false if not found (not an assembler instruction).
+#		Returns TRUE upon matching the section with an assembler instruction
+#				and will assign values to the corresponding member variables:
+#					m_OpCode, m_NumOpCode = 0, m_type
+#		FALSE if not found (not an assembler instruction).
 #
 ##################################################################*/
-bool Instruction::isAssemInstruct(const string &a_section, int &a_count) {
-	auto it = m_AssemList.find(a_section);
-	if (it != m_AssemList.end()) {
-		
-		//found the opcode string
-		m_OpCode = it->first;
-		m_NumOpCode = 0; //AL does not have opcodes
-		if (it->second == AT_END) m_type = ST_End;
-		else m_type = ST_AssemblerInstr;
-		if (a_count = 1) {
-
-			//"no label" case
-			a_count += 1;
-		}
-		return true;
-	}
-	return false;
-}
-/*bool Instruction::isAssemInstruct(const string &a_section, int &a_count);*/
-
 bool Instruction::isAssemInstruct(const string &a_segment) {
 	auto it = m_AssemList.find(a_segment);
 	if (it != m_AssemList.end()) {
@@ -186,41 +179,30 @@ bool Instruction::isAssemInstruct(const string &a_segment) {
 	}
 	return false;
 }
+/*bool Instruction::isAssemInstruct(const string &a_segment);*/
+
 
 /*##################################################################
 #	NAME
 #		bool Instruction::isMachineInstruct
 #
 #	SYNOPSIS
-#		bool Instruction::isMachineInstruct(const string &a_section, int &a_count);
+#		bool Instruction::isMachineInstruct(const string &a_segment);
 #
-#			a_section	--> a piece of the line (parsed out by spaces)
-#			a_count		--> "column" counter / word counter.
+#			a_segment	--> a piece of the line (parsed out by spaces)
 #
 #	DESCRIPTION
 #		This function is responsible for determining whether this is an
 #		machine instruction by comparing it to the strings of machine list
 #
 #	RETURNS
-#		Returns true upon matching the section with a machine instruction,
-#		false if not found (not a machine instruction).
+#		Returns TRUE upon matching the section with a machine instruction,
+#				and will assign values to corresponding member variables:
+#					m_OpCode, m_NumOpCode, m_type
+#
+#		Returns FALSE if not found (not a machine instruction).
 #
 ##################################################################*/
-bool Instruction::isMachineInstruct(const string &a_section, int &a_count) {
-	auto it = m_MachList.find(a_section);
-	if (it != m_MachList.end()) {
-		m_OpCode = it->first;
-		m_NumOpCode = it->second; //second value stored is the ML value
-		m_type = ST_MachineLanguage;
-		if (a_count == 1) {
-			a_count++;
-		}
-		return true;
-	}
-	else return false;
-}
-/*bool Instruction::isMachineInstruct(const string &a_section, int &a_count);*/
-
 bool Instruction::isMachineInstruct(const string &a_segment) {
 	auto it = m_MachList.find(a_segment);
 	if (it != m_MachList.end()) {
@@ -231,6 +213,7 @@ bool Instruction::isMachineInstruct(const string &a_segment) {
 	}
 	else return false;
 }
+/*bool Instruction::isMachineInstruct(const string &a_segment);*/
 
 
 /*##################################################################

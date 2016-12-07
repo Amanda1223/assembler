@@ -18,6 +18,27 @@
 
 // Constructor for the assembler.  Note: we are passing argc and argv to the file access constructor.
 // See main program.
+
+/*##################################################################
+#	NAME
+#		void Assembler::Assembler
+#
+#	SYNOPSIS
+#		Assembler::Assembler(int argc, char *argv[]);
+#
+#			argc	--> number of arguments passed to the progam. Should only be 2
+#			argv	--> the array of arguments passed to the program
+#						[0] should be the program name
+#						[1] should be the file we are reading from
+#
+#	DESCRIPTION
+#		Opening the file in the command line arguments for program use
+#		using the FileAccess class.
+#
+#	RETURNS
+#		((void))
+#
+##################################################################*/
 Assembler::Assembler(int argc, char *argv[])
 	: m_facc(argc, argv)
 {
@@ -38,8 +59,9 @@ Assembler::~Assembler()
 #		void Assembler::PassI();
 #
 #	DESCRIPTION
-#		This function is responsible for identifying the instruction
-#		type as well as beginning the symbol table to prep Pass II. 
+#		This function is responsible for:
+#				(1) Identifying the instruction type of a line.
+#				(2) Filling in the symbol table for the whole text file. 
 #			
 #	RETURNS
 #		((void))
@@ -47,7 +69,6 @@ Assembler::~Assembler()
 ##################################################################*/
 void Assembler::PassI()
 {
-		//hello
 	int loc = 0;        // Tracks the location of the instructions to be generated.
 
 	// Successively process each line of source code.
@@ -83,3 +104,43 @@ void Assembler::PassI()
 	}
 }
 /*void Assembler::PassI();*/
+
+
+/*##################################################################
+#	NAME
+#		void Assembler::PassII
+#
+#	SYNOPSIS
+#		void Assembler::PassII();
+#
+#	DESCRIPTION
+#		This function is responsible for:
+#				(1) Translating each line into instruction code.
+#				(2) Finding each error, and reporting them accordingly.
+#
+#	RETURNS
+#		((void))
+#
+##################################################################*/
+void Assembler::PassII() {
+
+	//Parse in each line from the file :: re-examining, except this time around we have the filled Symbol Table.
+
+	//Receive a line in.
+
+	//Use the instruction class to figure out the type, location and Label/Operand if any
+
+	//If there was a Operand, find the value that was stored if any [ERROR if no value was stored.]
+
+	//Each instruction may have its own Error depending on how it is used.
+
+	//DC/DS instructions need to have LABEL | DS/DC | NUMERICAL_VALUE [ERROR if there was no value within the "third column"]
+
+	//ORG needs to have a numerical value after it. [ERROR if no value after]
+
+
+
+	//If any errors were found, we should NOT emulate the program, and report all the errors
+
+}
+/*void Assembler::PassII();*/

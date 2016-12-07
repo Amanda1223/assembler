@@ -19,9 +19,9 @@
 
 // The elements of an instruction.
 class Instruction {
-
 public:
 
+	//initialize all member variables
 	Instruction();
 
 	~Instruction() { };
@@ -29,10 +29,10 @@ public:
 	// Codes to indicate the type of instruction we are processing.  Why is this inside the
 	// class?
 	enum InstructionType {
-		ST_MachineLanguage, // A machine language instruction.
-		ST_AssemblerInstr,  // Assembler Language instruction.
-		ST_Comment,          // Comment or blank line
-		ST_End                    // end instruction.
+		ST_MachineLanguage,
+		ST_AssemblerInstr,
+		ST_Comment,
+		ST_End
 	};
 
 	enum MachineOpCode {
@@ -82,11 +82,13 @@ private:
 	//############################## FUNCTION DECLARATIONS  ##############################
 	
 	//Determine the type of instruction Assembly | Machine
-	bool isAssemInstruct(const string &a_section, int &a_count);
-	bool isMachineInstruct(const string &a_section, int &a_count);
 	bool isAssemInstruct(const string &a_segment);
 	bool isMachineInstruct(const string &a_segment);
+
+	//checking if there is a comment on the line and parsing it out.
 	void checkComment(string &a_section);
+
+	//clearing the member variables of the class, useful for parsing line by line.
 	void clearInfo();
 
 	//##############################  MEMBER VARIABLES  ##############################
@@ -125,7 +127,6 @@ private:
 	int m_NumOpCode;     // The numerical value of the op code.
 	InstructionType m_type; // The type of instruction.
 
-	bool m_IsNumericOperand;// == true if the operand is numeric.
+	bool m_IsNumericOperand;// == true if the operand is numeric. :: will have to check this specifically in pass II for errors
 	int m_OperandValue;   // The value of the operand if it is numeric.
 };
-
