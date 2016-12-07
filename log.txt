@@ -154,7 +154,11 @@ Fixed the debugger error from yesterday (was unhappy about an if else case). Sim
 Finishing up testing on PassI :: Symbol table printing correctly, parsing each line... except one.
 
 BUGS:
-	(1) When testing, would read through each line and correctly store the value and location except label B, which happens
+	(1) [FIXED 12/07/2016]When testing, would read through each line and correctly store the value and location except label B, which happens
 		to occur after the *only* ds statement. Looking into this...
 	    Found answer : the parser believes "b" is an assembly instruction! Oh dear...
 	  POSSIBLE FIX (needs testing) re-wrote the parseinstruction re-organizing the code and putting relevant LABEL | INSTR | OPERAND within a vector for each line.
+
+12/7/2016
+   Fixed the bug from Monday.
+   Began setting up PassII() and laying out the process with comments. 
