@@ -125,6 +125,7 @@ void Assembler::PassII() {
 	//Initialize Error class.
 	Errors err;
 	err.InitErrorReporting();
+	m_facc.rewind();
 
 	//Parse in each line from the file :: re-examining, except this time around we have the filled Symbol Table.
 	int loc = 0;
