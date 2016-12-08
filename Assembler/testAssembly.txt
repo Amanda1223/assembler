@@ -1,0 +1,13 @@
+;commenting
+ADD
+SUB
+ORG
+DC
+B
+BM
+BZ
+END
+ORG
+DIV
+STORE
+READ

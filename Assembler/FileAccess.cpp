@@ -52,7 +52,7 @@ FileAccess::FileAccess(int argc, char *argv[])
 		exit(1);
 	}
 }
-/*FileAccess::FileAccess(int argc, char *argv[])*/
+/*FileAccess::FileAccess(int argc, char *argv[]);*/
 
 
 /*##################################################################
@@ -61,11 +61,9 @@ FileAccess::FileAccess(int argc, char *argv[])
 #
 #	SYNOPSIS
 #		FileAccess::~FileAccess();
-#		
-#			((no arguments))
 #
 #	DESCRIPTION
-#		This deconstructor simply closes the file we were working on.
+#		This deconstructor closes the open file
 #
 #	RETURNS
 #		((none))
@@ -75,7 +73,7 @@ FileAccess::~FileAccess()
 {
 	m_sfile.close();
 }
-/*FileAccess::~FileAccess();*/
+/*FileAccess::~FileAccess()*/
 
 
 /*##################################################################
@@ -130,4 +128,4 @@ void FileAccess::rewind()
 	m_sfile.clear();
 	m_sfile.seekg(0, ios::beg);
 }
-/*void FileAccess::rewind();*/
+/*void FileAccess::rewind()*/
