@@ -66,16 +66,17 @@ public:
 
 	// To access the label
 	inline string &GetLabel() {
-
 		return m_Label;
 	};
 
 	// To determine if a label is blank.
 	inline bool isLabel() {
-
 		return !m_Label.empty();
 	};
 
+	inline int GetOpCode() {
+		return m_NumOpCode;
+	};
 
 private:
 

@@ -161,4 +161,6 @@ BUGS:
 
 12/7/2016
    Fixed the bug from Monday.
-   Began setting up PassII() and laying out the process with comments. 
+   Began setting up PassII() and laying out the process with comments.
+   Translation stages :: should just focus on the translation of a line for now, then focus on errors.
+	**Commenting in where I believe errors would logically occur for future reference (with "//Error::" or something along those lines)

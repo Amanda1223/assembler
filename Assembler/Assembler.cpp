@@ -81,13 +81,11 @@ void Assembler::PassI()
 			// We will let this error be reported by Pass II.
 			return;
 		}
-		
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
-
+		cout << buff << endl;
 		
 		// If this is an end statement, there is nothing left to do in pass I.
-		// Pass II will determine if the end is the last statement.
 		if (st == Instruction::ST_End) return;
 
 		// Labels can only be on machine language and assembler language
@@ -124,11 +122,41 @@ void Assembler::PassI()
 ##################################################################*/
 void Assembler::PassII() {
 
+	//Initialize Error class.
+	Errors err;
+	err.InitErrorReporting();
+
 	//Parse in each line from the file :: re-examining, except this time around we have the filled Symbol Table.
+	int loc = 0;
+	cout << "Translation of Program : " << endl << endl;
+	for (; ; ) {
+		string buff;
+		if (!m_facc.GetNextLine(buff)) {
+			// If there are no more lines, we are missing an end statement.
+			// We will let this error be reported by Pass II.
 
-	//Receive a line in.
+			return;
+		}
 
-	//Use the instruction class to figure out the type, location and Label/Operand if any
+		// Parse the line and get the instruction type.
+		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
+
+		// Pass II will determine if the end is the last statement.
+		if (st == Instruction::ST_End) return;
+
+		// Labels can only be on machine language and assembler language
+		// instructions.  So, skip other instruction types.
+		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) continue;
+
+		loc = m_inst.LocationNextInstruction(loc);
+
+		//output the translation
+		//LOCATION	| CONTENTS 000 1234	| ORIGINAL
+		//loc		| m_NumOpCode && location + value of operand | m_inst.m_instruction 
+		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCode() << setw(4) << "/t" << buff << endl;
+	}
+
+	//Use the instruction class to figure out the type, location and Label/Operand if any -- Translating
 
 	//If there was a Operand, find the value that was stored if any [ERROR if no value was stored.]
 
