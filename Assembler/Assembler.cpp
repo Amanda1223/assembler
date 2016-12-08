@@ -153,8 +153,17 @@ void Assembler::PassII() {
 
 		//output the translation
 		//LOCATION	| CONTENTS 000 1234	| ORIGINAL
-		//loc		| m_NumOpCode && location + value of operand | m_inst.m_instruction 
-		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCode() << setw(4) << "/t" << buff << endl;
+		//loc		| m_NumOpCode && location + value of operand | m_inst.m_instruction
+
+		//If there is an operand check if it exists in the symbol table.
+		if (!m_symtab.LookupSymbol(m_inst.GetOperand(), loc)) {
+			if (loc == -999) {
+				cout << "ERROR :: multiply defined variable." << endl;
+			} else 	cout << "ERROR :: no operand found in symbol table." << endl; //PLACEHOLDER.
+			exit(1);
+		}
+		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCode() << setw(4) << (loc);
+		cout << "/t" << buff << endl;
 	}
 
 	//Use the instruction class to figure out the type, location and Label/Operand if any -- Translating

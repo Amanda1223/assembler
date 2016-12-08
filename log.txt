@@ -164,3 +164,8 @@ BUGS:
    Began setting up PassII() and laying out the process with comments.
    Translation stages :: should just focus on the translation of a line for now, then focus on errors.
 	**Commenting in where I believe errors would logically occur for future reference (with "//Error::" or something along those lines)
+
+12/8/2016
+   Filled in the Error Class, since it was just display, initialize and insert type functions. (May need to come back and fix this later)
+   Added iomanip to the stdfx file, for setting precision in printing the instruction location as well as the value/location.
+   To find get location + value, need to look up if it is in the symbol table already [if it's not :: error], if it is then get the value.

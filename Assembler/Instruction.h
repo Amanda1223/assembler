@@ -78,6 +78,14 @@ public:
 		return m_NumOpCode;
 	};
 
+	inline string GetOperand() {
+		return m_Operand;
+	};
+
+	inline int GetOperandVal() {
+		return m_OperandValue;
+	}
+
 private:
 
 	//############################## FUNCTION DECLARATIONS  ##############################

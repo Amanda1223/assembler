@@ -69,7 +69,6 @@ void SymbolTable::DisplaySymbolTable() {
 	printf("Symbol #\tSymbol\tLocation\n");
 	for ( auto it = m_symbolTable.begin(); it != m_symbolTable.end(); ++it, ++symNum) {
 		cout << symNum << "\t\t " << it->first << "\t " << it->second << endl;
-		//printf("  %d\t  %s\t  %d\n", symNum, it->first, it->second);
 	}
 	return;
 }
@@ -94,7 +93,6 @@ void SymbolTable::DisplaySymbolTable() {
 #
 ##################################################################*/
 bool SymbolTable::LookupSymbol(string &a_symbol, int &a_loc) {
-
 	auto st = m_symbolTable.find(a_symbol);
 	if (st != m_symbolTable.end()) return false;
 	else return true;

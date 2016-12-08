@@ -285,3 +285,6 @@ int Instruction::LocationNextInstruction(int a_loc) {
 	return a_loc + 1;
 }
 /*int Instruction::LocationNextInstruction(int a_loc);*/
+
+
+//Add a function for ERROR DETECTION based upon LANGUAGE INSTRUCTION
