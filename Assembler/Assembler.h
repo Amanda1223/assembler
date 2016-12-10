@@ -20,6 +20,7 @@
 #include "Instruction.h"
 #include "FileAccess.h"
 #include "Emulator.h"
+#include "Errors.h"
 
 
 class Assembler {
@@ -42,6 +43,7 @@ public:
 
 private:
 
+	//#######################VARIABLES################################
 	FileAccess m_facc;	    // File Access object
 	SymbolTable m_symtab; // Symbol table object
 	Instruction m_inst;	    // Instruction object

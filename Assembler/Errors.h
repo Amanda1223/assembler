@@ -32,8 +32,14 @@ public:
 	// Displays the collected error message.
 	static void DisplayErrors();
 
+	// Detailing the messages
+	static string createError(int a_line, int a_loc, string &a_errMsg);
+
+	// Display the most recent error recorded
+	static string reportCurrentError();
+
 private:
 
-	static vector<string> m_ErrorMsgs;
+	static vector <string> m_ErrorMsgs;
 };
 #endif

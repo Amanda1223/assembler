@@ -13,6 +13,7 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <Errors.h>
 //
 // Class to parse and provide information about instructions.  Note: you will be adding more functionality.
 //
@@ -64,27 +65,45 @@ public:
 	// Compute the location of the next instruction.
 	int LocationNextInstruction(int a_loc);
 
-	// To access the label
+	//#######################LABEL##############################
+	// String :: access the label
 	inline string &GetLabel() {
 		return m_Label;
 	};
 
-	// To determine if a label is blank.
+	// Boolean :: determine if a label is blank.
 	inline bool isLabel() {
 		return !m_Label.empty();
 	};
 
-	inline int GetOpCode() {
+	//#######################OP-CODE##############################
+	// Integer :: access numerical opcode
+	inline int GetOpCodeNum() {
 		return m_NumOpCode;
 	};
 
+	// String  :: access opcode literal value
+	inline string GetOpCode() {
+		return m_OpCode;
+	};
+
+	//#######################OPERAND##############################
+	// String :: access operand (eol)
 	inline string GetOperand() {
 		return m_Operand;
 	};
 
+	// Integer :: operand value
 	inline int GetOperandVal() {
 		return m_OperandValue;
-	}
+	};
+
+	// Boolean :: if operand is numeric
+	inline bool isNumericOper() {
+		return m_IsNumericOperand;
+	};
+
+	
 
 private:
 
@@ -95,10 +114,16 @@ private:
 	bool isMachineInstruct(const string &a_segment);
 
 	//checking if there is a comment on the line and parsing it out.
-	void checkComment(string &a_section);
+	void parseOutComment(string &a_section);
 
 	//clearing the member variables of the class, useful for parsing line by line.
 	void clearInfo();
+
+	//function to detect if a string contains only an INTEGER value
+	bool isNumeric(const string &a_segment);
+
+	//function to detect if a label/operand meets the standards provided
+	bool isValidLabel(const string &a_segment);
 
 	//##############################  MEMBER VARIABLES  ##############################
 	const unordered_map <string, MachineOpCode> m_MachList = { //list of machine codes / string equiv

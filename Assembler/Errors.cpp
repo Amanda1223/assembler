@@ -10,6 +10,8 @@
 #include "stdafx.h"
 #include "Errors.h"
 
+//initialize space for the error messages?
+vector<string> Errors::m_ErrorMsgs;
 
 /*##################################################################
 #	NAME
@@ -84,7 +86,20 @@ void Errors::DisplayErrors() {
 
 	cout << "ERROR REPORTS::" << endl;
 	for (auto it = m_ErrorMsgs.begin(); it != m_ErrorMsgs.end(); ++it) {
-		cout << it->data << endl;
+		cout << *it << endl;
 	}
 }
 /*void Errors::DisplayErrors();*/
+
+//Create Error? Line + Location + Num + Error + Reason
+string Errors::createError(int a_line, int a_loc, string &a_errMsg) {
+	string line = to_string(a_line);
+	string location = to_string(a_loc);
+
+	return ("Error on line " + line + " location " + location + " :: " + a_errMsg + '\n');
+}
+
+string Errors::reportCurrentError() {
+	if( !m_ErrorMsgs.empty() ) return m_ErrorMsgs.back();
+	else return string("No Errors To Report");
+}

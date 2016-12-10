@@ -14,7 +14,7 @@
 //
 #include "stdafx.h"
 #include "Assembler.h"
-#include "Errors.h"
+
 
 // Constructor for the assembler.  Note: we are passing argc and argv to the file access constructor.
 // See main program.
@@ -122,31 +122,37 @@ void Assembler::PassI()
 ##################################################################*/
 void Assembler::PassII() {
 
-	//Initialize Error class.
-	Errors err;
-	err.InitErrorReporting();
+	//Initialize error reporting, will clear out vector if anything in it.
+	Errors::InitErrorReporting();
 	m_facc.rewind();
 
-	//Parse in each line from the file :: re-examining, except this time around we have the filled Symbol Table.
+	// Parse in each line from the file :: re-examining, except this time around we have the filled Symbol Table.
 	int loc = 0;
+	int line = 1;
 	cout << "Translation of Program : " << endl << endl;
-	for (; ; ) {
+	for (; ; ++line) {
 		string buff;
 		if (!m_facc.GetNextLine(buff)) {
-			// If there are no more lines, we are missing an end statement.
-			// We will let this error be reported by Pass II.
 
-			return;
+			// Missing an end statement
+			Errors::RecordError(Errors::createError(line, loc, string(" *FATAL* missing assembly language END statement. Unable to continue...")));
+			exit(1);
 		}
 
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
 		// Pass II will determine if the end is the last statement.
-		if (st == Instruction::ST_End) return;
+		if (st == Instruction::ST_End) {
+			if (!m_facc.GetNextLine(buff)) return;
+
+			// Else there were still more lines after the END statement
+			else Errors::RecordError(Errors::createError(line, loc, string("statement after assembly language END instruction.")));
+			//PLACEHOLDER. cout << "ERROR :: statement after the end statement" << endl; 
+		}
 
 		// Labels can only be on machine language and assembler language
-		// instructions.  So, skip other instruction types.
+		// instructions.  So, skip other instruction types...... Error..... if label exists?
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) continue;
 
 		loc = m_inst.LocationNextInstruction(loc);
@@ -156,13 +162,16 @@ void Assembler::PassII() {
 		//loc		| m_NumOpCode && location + value of operand | m_inst.m_instruction
 
 		//If there is an operand check if it exists in the symbol table.
-		if (!m_symtab.LookupSymbol(m_inst.GetOperand(), loc)) {
-			if (loc == -999) {
-				cout << "ERROR :: multiply defined variable." << endl;
-			} else 	cout << "ERROR :: no operand found in symbol table." << endl; //PLACEHOLDER.
-			exit(1);
+		if (!m_inst.GetOperand().empty() && !m_symtab.LookupSymbol(m_inst.GetOperand(), loc)) {
+
+			//if location is -999 it's multiply defined, else it is undefined
+			(loc == -999) ? 
+				Errors::RecordError(Errors::createError(line, loc, string("multiply defined variable named - " + m_inst.GetOperand()))) :
+				Errors::RecordError(Errors::createError(line, loc, string("undefined variable named - " + m_inst.GetOperand())));
 		}
-		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCode() << setw(4) << (loc);
+
+		//Define an illegal address?..
+		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCodeNum() << setw(4) << (loc + m_inst.GetOperandVal());
 		cout << "/t" << buff << endl;
 	}
 

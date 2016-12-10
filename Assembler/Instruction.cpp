@@ -90,6 +90,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	if (a_buff.empty()) {
 		return m_type;
 	}
+
 	m_instruction = a_buff;
 	string segment = ""; //storage for the single phrases/words within the buffer
 	int count = 1; //count for each loop iteration [assuming 3 (w/o end comments)]
@@ -98,7 +99,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	std::istringstream singleOut(m_instruction);
 	vector <string> lineSegment;
 	while (singleOut >> segment) {
-		checkComment(segment);
+		parseOutComment(segment);
 
 		//parsed out comments, therefore possibility of "emptiness" :: comments at end will no longer be within the line
 		if (!segment.empty()) lineSegment.push_back(segment);
@@ -106,6 +107,13 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 
 	//IF the lineSegment vector is empty, we had a comment on the beginning of the line
 	if (lineSegment.empty()) return m_type;
+
+	//If the lineSegment vector has MORE than 3 values within it, there are too many arguments.
+	if (lineSegment.size() > 3) {
+		cout << "ERROR :: Too many arguments on a single line." << endl; //PLACEHOLDER
+		exit(1);
+	}
+
 	bool isAssem = false, isMach = false;
 	for (int column = 1; column <= lineSegment.size(); column++) {
 		segment = lineSegment.at(column - 1);
@@ -115,6 +123,8 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			//assume label is first? "3 columns" normally consist of LABEL | INST | OPERAND
 			//this could be a potential issue in Error checking.
 			m_Label = lineSegment.at(column - 1);
+
+			//ERROR :: check if valid label [parse]
 			continue;
 		}
 
@@ -141,6 +151,9 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			continue;
 		}
 	}
+	//If isAssem == false, and isMach == false, then we parsed a line with an illegal op-code Error:: Illegal opcode (exit)
+	//Parse the operand & label to check if they are legal values
+	//Parse the value if is numerical operand.
 	return m_type;
 }
 /*Instruction::InstructionType Instruction::ParseInstruction(string &a_buff);*/
@@ -218,10 +231,10 @@ bool Instruction::isMachineInstruct(const string &a_segment) {
 
 /*##################################################################
 #	NAME
-#		void Instruction::checkComment
+#		void Instruction::parseOutComment
 #
 #	SYNOPSIS
-#		void Instruction::checkComment(string &a_section);
+#		void Instruction::parseOutComment(string &a_section);
 #
 #			a_section	--> a piece of the line (parsed out by spaces)
 #
@@ -234,7 +247,7 @@ bool Instruction::isMachineInstruct(const string &a_segment) {
 #		((void))
 #
 ##################################################################*/
-void Instruction::checkComment(string &a_section) {
+void Instruction::parseOutComment(string &a_section) {
 
 	//check if the "single word" is attached to a comment!
 	auto commentSplit = a_section.find(";");
@@ -248,7 +261,7 @@ void Instruction::checkComment(string &a_section) {
 	}
 	return;
 }
-/*void Instruction::checkComment(string &a_section);*/
+/*void Instruction::parseOutComment(string &a_section);*/
 
 /*##################################################################
 #	NAME
@@ -288,3 +301,66 @@ int Instruction::LocationNextInstruction(int a_loc) {
 
 
 //Add a function for ERROR DETECTION based upon LANGUAGE INSTRUCTION
+
+/*##################################################################
+#	NAME
+#		bool Instruction::isNumeric
+#
+#	SYNOPSIS
+#		bool Instruction::isNumeric(const string &a_segment);
+#
+#			a_segment	--> the string being checked for numerical characters.
+#
+#	DESCRIPTION
+#		This function is responsible for determining whether a string
+#		contains all digits.
+#
+#	RETURNS
+#		Returns FALSE if empty string
+#				FALSE if a character other than digit is found
+#				TRUE if all characters within the string are digits
+#
+##################################################################*/
+bool Instruction::isNumeric(const string &a_segment) {
+
+	//checks each digit from string.begin() to string.end() by using the isdigit built-in function 
+	return !a_segment.empty() && find_if(a_segment.begin(), a_segment.end(),
+		[](char check) { return !isdigit(check); }) == a_segment.end();
+}
+/*bool Instruction::isNumeric(const string &a_segment);*/
+
+
+/*##################################################################
+#	NAME
+#		bool Instruction::isValidLabel
+#
+#	SYNOPSIS
+#		bool Instruction::isValidLabel(const string &a_segment);
+#
+#			a_segment	--> the label/operand being checked
+#
+#	DESCRIPTION
+#		This function is responsible for checking the label/operand :
+#			(a) if it begins with a letter.
+#			(b) if the rest of the string is only numbers/digits
+#			(c) if it is between 1 -> 10 characters
+#
+#	RETURNS
+#		Returns FALSE if empty string (should never happen.)
+#				FALSE if string is > 10 characters
+#				FALSE if string's first character is something other than a letter
+#				FALSE if the string contains special characters
+#				TRUE if the string meets the standards specified
+#
+##################################################################*/
+bool Instruction::isValidLabel(const string &a_segment) {
+	if (!isalpha(a_segment[0])) return false;
+
+	//check if size > 10
+	if (a_segment.size() > 10) return false;
+
+	//checking each character from string.being -> string.end() if it is alphanumeric
+	return !a_segment.empty() && find_if(a_segment.begin(), a_segment.end(),
+		[](char check) {return !isalnum(check); }) == a_segment.end();
+}
+/*bool Instruction::isValidLabel(const string &a_segment);*/

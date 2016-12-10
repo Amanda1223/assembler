@@ -160,7 +160,7 @@ BUGS:
 	  POSSIBLE FIX (needs testing) re-wrote the parseinstruction re-organizing the code and putting relevant LABEL | INSTR | OPERAND within a vector for each line.
 
 12/7/2016
-   Fixed the bug from Monday.
+   FIXed BUGS(1) from Monday.
    Began setting up PassII() and laying out the process with comments.
    Translation stages :: should just focus on the translation of a line for now, then focus on errors.
 	**Commenting in where I believe errors would logically occur for future reference (with "//Error::" or something along those lines)
@@ -169,3 +169,30 @@ BUGS:
    Filled in the Error Class, since it was just display, initialize and insert type functions. (May need to come back and fix this later)
    Added iomanip to the stdfx file, for setting precision in printing the instruction location as well as the value/location.
    To find get location + value, need to look up if it is in the symbol table already [if it's not :: error], if it is then get the value.
+	When checking Errors that need comparison to the Symbol Table, check it in the Assembler.cpp class (since Instruction does not have access), this will keep everything as condensed as it will get.
+
+   Questions:
+	(1) How to update the Error Class? In Assembler.cpp as well as Instruction.cpp?
+	(2) How many errors to "hold onto" at once? When to report them?
+	(3) Allowed to add functions to Assembler.cpp for error-checking?
+
+12/9/2016
+
+Thoughts:
+   * Probably should just error report in Assembler.cpp, and use inline get calls to get the values of the variables within Instruction.cpp... it's a start!
+   * Could keep a LINE COUNT for the error and apply it to the Error Reporting
+   * Print out copy of Errors to check, and do a checklist (starting to get confusing otherwise!)
+
+Accomplished:
+   Error class, learning of proper use of static functions.
+   find_if functionality for checking appropriate use of Labels/Operands.
+   Error Class :
+	createError functionality, where it will take in a line number, location, and then the corresponding message.
+	reportCurrentError functionality, where it will just display the last Error pushed onto the vector [vector.back()]
+   Instruction Class :
+	isNumeric functionality, where it displays if a string contains all integers.
+	validating labels/operands, where it examines the first element, then proceeds to check each other element for alphanumeric characters.
+
+Tomorrow ::
+   Focus on Instruction.cpp where Errors will be reported, we have the skeleton of details now, so it just comes down to implementing in the appropriate places.
+   Hopefully will have an answer from Miller about the sizes and if the Error vector should be declared in a specific place in the Error.cpp file.
