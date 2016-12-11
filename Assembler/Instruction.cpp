@@ -110,12 +110,11 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 
 	//If the lineSegment vector has MORE than 3 values within it, there are too many arguments.
 	if (lineSegment.size() > 3) {
-		cout << "ERROR :: Too many arguments on a single line." << endl; //PLACEHOLDER
-		exit(1);
+		Errors::RecordError(Errors::createError(string("too many arguments on the line.")));
+		//PLACEHOLDER cout << "ERROR :: Too many arguments on a single line." << endl;
 	}
-
 	bool isAssem = false, isMach = false;
-	for (int column = 1; column <= lineSegment.size(); column++) {
+	for (unsigned column = 1; column <= lineSegment.size(); column++) {
 		segment = lineSegment.at(column - 1);
 		transform(segment.begin(), segment.end(), segment.begin(), toupper);
 		if (column == 1 && lineSegment.size() == 3) {
@@ -123,37 +122,49 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			//assume label is first? "3 columns" normally consist of LABEL | INST | OPERAND
 			//this could be a potential issue in Error checking.
 			m_Label = lineSegment.at(column - 1);
-
-			//ERROR :: check if valid label [parse]
+			isValidLabel(m_Label);
 			continue;
 		}
 
 		//determining these later orig INIT to FALSE, changes upon later if-elseif :: therefore the column will be incremented for the operand
 		if (isMach) {
 			m_Operand = lineSegment.at(column - 1);
-			m_IsNumericOperand = false;
-			isMach = false;
+			isValidLabel(m_Operand);
+
+			// PARSE to check if the value is only ALPHABETICAL for ML
+			if (m_IsNumericOperand = isNumeric(m_Operand)) {
+
+				// isNumeric == true, means error for ML
+				Errors::RecordError(Errors::createError("illegal use of numerical operand \"" + m_Operand + "\" on Machine Language operation."));
+			}
 			continue;
 		}
 		else if (isAssem) {
 			m_Operand = lineSegment.at(column - 1);
 
-			//assuming numeric will always be true in an assembly language
-			m_IsNumericOperand = true;
-			m_OperandValue = stoi(lineSegment.at(column - 1));
-			isAssem = false;
+			// PARSE to check if the value is only NUMERICAL for AL
+			if (!(m_IsNumericOperand = isNumeric(m_Operand))) {
+
+				// isNumeric == false, means error for AL instructions.
+				Errors::RecordError(Errors::createError("illegal use of operand \"" + m_Operand + "\" on Assembly Language operation"));
+			}
+
+			// If numerical, can give the operand value correctly.
+			else m_OperandValue = stoi(lineSegment.at(column - 1));
 			continue;
 		}
-		if (isMach = isMachineInstruct(segment)) {
-			continue;
-		}
-		else if (isAssem = isAssemInstruct(segment)) {
-			continue;
-		}
+		if (isMach = isMachineInstruct(segment)) continue;
+		else if (isAssem = isAssemInstruct(segment)) continue;
 	}
-	//If isAssem == false, and isMach == false, then we parsed a line with an illegal op-code Error:: Illegal opcode (exit)
-	//Parse the operand & label to check if they are legal values
-	//Parse the value if is numerical operand.
+
+	//call to check valid syntax of the entire line :: LABEL | OPCODE | OPERAND, per instruction specifications.
+	if (isAssem) assemSyntaxCheck();
+	else if (isMach) machSyntaxCheck();
+	else {
+		Errors::RecordError(Errors::createError("illegal line syntax, no language instruction found."));
+		m_OpCode = unknownOpcodeNum;
+		m_Operand = unknownOpcode;
+	}
 	return m_type;
 }
 /*Instruction::InstructionType Instruction::ParseInstruction(string &a_buff);*/
@@ -344,6 +355,8 @@ bool Instruction::isNumeric(const string &a_segment) {
 #			(a) if it begins with a letter.
 #			(b) if the rest of the string is only numbers/digits
 #			(c) if it is between 1 -> 10 characters
+#		If it the label/operand broke any of the specifications, we report to
+#		the Error Class here.
 #
 #	RETURNS
 #		Returns FALSE if empty string (should never happen.)
@@ -354,13 +367,135 @@ bool Instruction::isNumeric(const string &a_segment) {
 #
 ##################################################################*/
 bool Instruction::isValidLabel(const string &a_segment) {
-	if (!isalpha(a_segment[0])) return false;
+	
+	//isValid will help reporting multiple errors on one label/operand (if it is too long & has invalid char)
+	bool isValid = true;
+	if (a_segment.empty()) return isValid;
+
+	if (!isalpha(a_segment[0])) {
+		Errors::RecordError(Errors::createError(a_segment + " has invalid label/operand syntax, cannot start with character : " + a_segment[0]));
+		isValid = false;
+	}
 
 	//check if size > 10
-	if (a_segment.size() > 10) return false;
+	if (a_segment.size() > 10) {
+		Errors::RecordError(Errors::createError(a_segment + " has invalid label/operand size, must be between 1 -> 10 characters."));
+		isValid = false;
+	}
 
 	//checking each character from string.being -> string.end() if it is alphanumeric
-	return !a_segment.empty() && find_if(a_segment.begin(), a_segment.end(),
-		[](char check) {return !isalnum(check); }) == a_segment.end();
+	for (auto it = a_segment.begin(); it != a_segment.end(); ++it) {
+		if (!isalnum(*it)) {
+			Errors::RecordError(Errors::createError(a_segment + " has invalid character : \"" + *it +"\""));
+			isValid = false;
+		}
+	}
+	return isValid;
 }
 /*bool Instruction::isValidLabel(const string &a_segment);*/
+
+
+/*##################################################################
+#	NAME
+#		void Instruction::assemSyntaxCheck
+#
+#	SYNOPSIS
+#		void Instruction::assemSyntaxCheck()
+#
+#	DESCRIPTION
+#		This function is responsible for determining if:
+#			(1) there are labels on DS/DC
+#			(2) NO labels on ORG
+#			(3) END contains no Label OR Operand
+#			(4) If the operand exists *important
+#			(5) Constant value too large?
+#
+#	RETURNS
+#		Returns a string with the latest error message.
+#
+##################################################################*/
+void Instruction::assemSyntaxCheck() {
+	if (!m_OpCode.empty()) {
+		string segment = "";
+		transform(m_OpCode.begin(), m_OpCode.end(), m_OpCode.begin(), toupper);
+		auto it = m_AssemList.find(segment);
+		if (it != m_AssemList.end()) {
+			switch (it->second) {
+
+				// ORG instructions cannot have a Label, *must* have NUMERICAL OPERAND
+			AT_ORG:
+				if (isLabel()) Errors::RecordError(Errors::createError("cannot have a label on the Assembly Instruction \"" + m_OpCode + "\""));
+				break;
+
+				// Require labels on DC, DS as well as NUMERICAL OPERANDS
+			AT_DC:
+			AT_DS:
+				if (isLabel()) Errors::RecordError(Errors::createError("Assembly Instructions \"" + m_OpCode + "\"require labels."));
+				break;
+			default:
+
+				//AT_END
+				if (isLabel() || isOperand()) Errors::RecordError(Errors::createError("cannot have a label or operand on the END instruction."));
+				return;
+			}
+
+			//check if there is in fact an operand
+			if(!isOperand()){
+				Errors::RecordError(Errors::createError("missing operand on assembly instruction \"" + m_OpCode + "\" "));
+			}
+
+			if (m_IsNumericOperand && isOperand() && m_OperandValue > maxValue) {
+				Errors::RecordError(Errors::createError("operand value too large for memory is greater than the max size of " + maxValue));
+			}
+		}
+		else {
+			Errors::RecordError(Errors::createError("FATAL ERROR :: read assembly instruction now missing in program memory."));
+			Errors::reportCurrentError();
+			system("pause");
+			exit(1);
+		}
+	}
+}
+/*void Instruction::assemSyntaxCheck()*/
+
+
+/*##################################################################
+#	NAME
+#		void Instruction::machSyntaxCheck
+#
+#	SYNOPSIS
+#		void Instruction::machSyntaxCheck()
+#
+#	DESCRIPTION
+#		This function is responsible for determining if:
+#			(1) there are operands on the instruction
+#			(2) HALT does not take an operand
+#
+#	RETURNS
+#		Returns a string with the latest error message.
+#
+##################################################################*/
+void Instruction::machSyntaxCheck() {
+	if (!m_OpCode.empty()) {
+		string segment = "";
+		transform(m_OpCode.begin(), m_OpCode.end(), m_OpCode.begin(), toupper);
+		auto it = m_MachList.find(segment);
+		if (it != m_MachList.end()) {
+			switch (it->second) {
+			MT_HALT:
+				if (isOperand()) Errors::RecordError(Errors::createError("operand not accepted on HALT machine instructions."));
+				return;
+			default:
+				if (!isOperand()) Errors::RecordError(Errors::createError("operand required after \"" + m_OpCode +"\" machine instruction."));
+				break;
+			}
+		}
+	}
+	else {
+		Errors::RecordError(Errors::createError("FATAL ERROR :: read machine instruction now missing in program memory."));
+		Errors::reportCurrentError();
+		system("pause");
+		exit(1);
+	}
+}
+/*void Instruction::machSyntaxCheck();*/

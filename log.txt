@@ -196,3 +196,11 @@ Accomplished:
 Tomorrow ::
    Focus on Instruction.cpp where Errors will be reported, we have the skeleton of details now, so it just comes down to implementing in the appropriate places.
    Hopefully will have an answer from Miller about the sizes and if the Error vector should be declared in a specific place in the Error.cpp file.
+
+12/10/2016
+Error Reporting in Assembler & Instruction class. Still need:
+    (1) Reporting an error if a symbol is not used in the table.
+    (2) Reporting an error for insuffecient memory (see e-mail conversation with Miller)
+    (3) Reporting an error if Constant is too large for VC 3600 memory (see e-mail conversation with Miller)
+    (4) Replacing undefined operand's location/address as (insert value)
+    (5) Replacing unknown operator as (insert value)

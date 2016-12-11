@@ -13,7 +13,7 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
-#include <Errors.h>
+#include "Errors.h"
 //
 // Class to parse and provide information about instructions.  Note: you will be adding more functionality.
 //
@@ -59,6 +59,11 @@ public:
 		AT_END
 	};
 
+	//#######################CONSTANTS##############################
+	const int maxValue = 999999;
+	const int unknownOpcodeNum = 99;
+	const string unknownOpcode = "??";
+
 	// Parse the Instruction.
 	InstructionType ParseInstruction(string &a_buff);
 
@@ -98,9 +103,8 @@ public:
 		return m_OperandValue;
 	};
 
-	// Boolean :: if operand is numeric
-	inline bool isNumericOper() {
-		return m_IsNumericOperand;
+	inline bool isOperand() {
+		return !m_Operand.empty();
 	};
 
 	
@@ -125,6 +129,12 @@ private:
 	//function to detect if a label/operand meets the standards provided
 	bool isValidLabel(const string &a_segment);
 
+	// function to validate if the proper syntax was used in an assembly line instruction
+	void assemSyntaxCheck();
+
+	// function to validate if the proper syntax was used in a machine line instruction
+	void machSyntaxCheck();
+
 	//##############################  MEMBER VARIABLES  ##############################
 	const unordered_map <string, MachineOpCode> m_MachList = { //list of machine codes / string equiv
 		{ "ADD", MT_ADD },
@@ -148,7 +158,6 @@ private:
 		{ "DS", AT_DS },
 		{ "END", AT_END }
 	}; 
-
 
 	// The elemements of an instruction
 	string m_Label;        // The label.

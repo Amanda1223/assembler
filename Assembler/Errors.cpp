@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "Errors.h"
 
-//initialize space for the error messages?
+// Initialize the space for the static variables.
 vector<string> Errors::m_ErrorMsgs;
 
 /*##################################################################
@@ -22,13 +22,14 @@ vector<string> Errors::m_ErrorMsgs;
 #
 #	DESCRIPTION
 #		This function is responsible for clearing out the error message
-#		vector.
+#		vector, and initialize error counting.
 #
 #	RETURNS
 #		((void))
 #
 ##################################################################*/
 void Errors::InitErrorReporting() {
+	m_TotalErrors = 0;
 
 	//Clearing out any errors that would possibly be within the Error Class already
 	if (m_ErrorMsgs.empty()) {
@@ -57,8 +58,9 @@ void Errors::InitErrorReporting() {
 ##################################################################*/
 void Errors::RecordError(string &a_emsg) {
 	if (a_emsg.empty()) return;
-
 	m_ErrorMsgs.push_back(a_emsg);
+	m_TotalErrors ++;
+	return;
 }
 /*void Errors::RecordError(string &a_emsg);*/
 
@@ -84,22 +86,80 @@ void Errors::DisplayErrors() {
 		return;
 	}
 
-	cout << "ERROR REPORTS::" << endl;
+	cout << m_TotalErrors << " ERROR REPORTS::" << endl;
 	for (auto it = m_ErrorMsgs.begin(); it != m_ErrorMsgs.end(); ++it) {
 		cout << *it << endl;
 	}
 }
 /*void Errors::DisplayErrors();*/
 
-//Create Error? Line + Location + Num + Error + Reason
-string Errors::createError(int a_line, int a_loc, string &a_errMsg) {
-	string line = to_string(a_line);
+
+/*##################################################################
+#	NAME
+#		string Errors::createError
+#
+#	SYNOPSIS
+#		string Errors::createError(int a_loc, const string &a_errMsg)
+#
+#			a_loc		-> the location where the error occurred.
+#			a_errMsg	-> the message describing the error.
+#
+#	DESCRIPTION
+#		This function is responsible for creating an error message string
+#		and returning it.
+#
+#	RETURNS
+#		Returns a string with the error message specified.
+#
+##################################################################*/
+string Errors::createError(int a_loc, const string &a_errMsg) {
 	string location = to_string(a_loc);
 
-	return ("Error on line " + line + " location " + location + " :: " + a_errMsg + '\n');
+	return ("Error at location " + location + " :: " + a_errMsg + '\n');
 }
+/*string Errors::createError(int a_loc, const string &a_errMsg);*/
 
+
+/*##################################################################
+#	NAME
+#		string Errors::createError
+#
+#	SYNOPSIS
+#		string Errors::createError(const string &a_errMsg)
+#
+#			a_errMsg	-> the message describing the error.
+#
+#	DESCRIPTION
+#		This function is responsible for creating an error message string
+#		and returning it.
+#
+#	RETURNS
+#		Returns a string with the error message specified.
+#
+##################################################################*/
+string Errors::createError(const string &a_errMsg) {
+	return ("Error ::" + a_errMsg + '\n');
+}
+/*string Errors::createError(const string &a_errMsg);*/
+
+
+/*##################################################################
+#	NAME
+#		string Errors::reportCurrentError
+#
+#	SYNOPSIS
+#		string Errors::reportCurrentError()
+#
+#	DESCRIPTION
+#		This function is responsible for returning the most recent
+#		error message produced.
+#
+#	RETURNS
+#		Returns a string with the latest error message.
+#
+##################################################################*/
 string Errors::reportCurrentError() {
 	if( !m_ErrorMsgs.empty() ) return m_ErrorMsgs.back();
 	else return string("No Errors To Report");
 }
+/*string Errors::reportCurrentError();*/

@@ -41,6 +41,9 @@ public:
 	// Run emulator on the translation.
 	void RunEmulator();
 
+	//#######################CONSTATNS################################
+	const int maxMemory = 9999;
+
 private:
 
 	//#######################VARIABLES################################

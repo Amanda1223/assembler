@@ -69,6 +69,7 @@ Assembler::~Assembler()
 ##################################################################*/
 void Assembler::PassI()
 {
+	Errors::InitErrorReporting();
 	int loc = 0;        // Tracks the location of the instructions to be generated.
 
 	// Successively process each line of source code.
@@ -135,7 +136,7 @@ void Assembler::PassII() {
 		if (!m_facc.GetNextLine(buff)) {
 
 			// Missing an end statement
-			Errors::RecordError(Errors::createError(line, loc, string(" *FATAL* missing assembly language END statement. Unable to continue...")));
+			Errors::RecordError(Errors::createError(loc, string(" *FATAL* missing assembly language END statement. Unable to continue...")));
 			exit(1);
 		}
 
@@ -147,47 +148,40 @@ void Assembler::PassII() {
 			if (!m_facc.GetNextLine(buff)) return;
 
 			// Else there were still more lines after the END statement
-			else Errors::RecordError(Errors::createError(line, loc, string("statement after assembly language END instruction.")));
+			else Errors::RecordError(Errors::createError(loc, string("statement after assembly language END instruction.")));
 			//PLACEHOLDER. cout << "ERROR :: statement after the end statement" << endl; 
 		}
 
 		// Labels can only be on machine language and assembler language
 		// instructions.  So, skip other instruction types...... Error..... if label exists?
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) continue;
-
 		loc = m_inst.LocationNextInstruction(loc);
 
 		//output the translation
 		//LOCATION	| CONTENTS 000 1234	| ORIGINAL
 		//loc		| m_NumOpCode && location + value of operand | m_inst.m_instruction
 
-		//If there is an operand check if it exists in the symbol table.
+		// If there is an operand check if it exists in the symbol table.
 		if (!m_inst.GetOperand().empty() && !m_symtab.LookupSymbol(m_inst.GetOperand(), loc)) {
 
-			//if location is -999 it's multiply defined, else it is undefined
-			(loc == -999) ? 
-				Errors::RecordError(Errors::createError(line, loc, string("multiply defined variable named - " + m_inst.GetOperand()))) :
-				Errors::RecordError(Errors::createError(line, loc, string("undefined variable named - " + m_inst.GetOperand())));
+			// If location is -999 it's multiply defined, else it is undefined
+			if (loc == -999) {
+				Errors::RecordError(Errors::createError(loc, string("multiply defined variable named - " + m_inst.GetOperand())));
+			}
+			else {
+				Errors::RecordError(Errors::createError(loc, string("undefined variable named - " + m_inst.GetOperand())));
+				m_symtab.AddSymbol(m_inst.GetOperand(), m_symtab.undefinedSymbol);
+			}
+			
+			// the location can also indicate out of memory issue. > 9999
+			if (loc > maxMemory) Errors::RecordError(Errors::createError(loc, "current location exceeds memory."));
 		}
 
 		//Define an illegal address?..
 		cout << loc << "/t" << setfill('0') << setw(2) << m_inst.GetOpCodeNum() << setw(4) << (loc + m_inst.GetOperandVal());
 		cout << "/t" << buff << endl;
+
+		//PRINT ERRORS HERE
 	}
-
-	//Use the instruction class to figure out the type, location and Label/Operand if any -- Translating
-
-	//If there was a Operand, find the value that was stored if any [ERROR if no value was stored.]
-
-	//Each instruction may have its own Error depending on how it is used.
-
-	//DC/DS instructions need to have LABEL | DS/DC | NUMERICAL_VALUE [ERROR if there was no value within the "third column"]
-
-	//ORG needs to have a numerical value after it. [ERROR if no value after]
-
-
-
-	//If any errors were found, we should NOT emulate the program, and report all the errors
-
 }
 /*void Assembler::PassII();*/

@@ -33,13 +33,14 @@ public:
 	static void DisplayErrors();
 
 	// Detailing the messages
-	static string createError(int a_line, int a_loc, string &a_errMsg);
+	static string createError( int a_loc, const string &a_errMsg );
+	static string createError(const string &a_errMsg);
 
 	// Display the most recent error recorded
 	static string reportCurrentError();
 
 private:
-
+	static int m_TotalErrors;
 	static vector <string> m_ErrorMsgs;
 };
 #endif
