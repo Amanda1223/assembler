@@ -90,11 +90,19 @@ void SymbolTable::DisplaySymbolTable() {
 #
 #	RETURNS
 #		boolean value, true when the symbol was found, false otherwise.
+#		Returns value of the location within a_loc if it exists.
+#		Returns undefined symbol in a_loc otherwise
 #
 ##################################################################*/
 bool SymbolTable::LookupSymbol(string &a_symbol, int &a_loc) {
-	auto st = m_symbolTable.find(a_symbol);
-	if (st != m_symbolTable.end()) return false;
-	else return true;
+	auto it = m_symbolTable.find(a_symbol);
+	if (it != m_symbolTable.end()){
+		a_loc = it->second;
+		return true;
+	}
+	else {
+		a_loc = undefinedSymbol;
+		return false;
+	}
 }
 /*bool SymbolTable::LookupSymbol(string &a_symbol, int &a_loc);*/

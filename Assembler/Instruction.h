@@ -103,6 +103,11 @@ public:
 		return m_OperandValue;
 	};
 
+	inline bool isNumericOperand() {
+		return m_IsNumericOperand;
+	};
+
+	//Bool :: is there an operand
 	inline bool isOperand() {
 		return !m_Operand.empty();
 	};

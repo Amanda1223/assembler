@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	assem.DisplaySymbolTable();
 
 	// Output the symbol table and the translation.
-	//assem.PassII();
+	assem.PassII();
 
 	// Run the emulator on the VC3600 program that was generated in Pass II.
 	

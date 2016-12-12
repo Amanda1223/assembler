@@ -25,15 +25,21 @@ public:
 		memset(m_memory, 0, MEMSZ * sizeof(int));
 	}
 	// Records instructions and data into VC3600 memory.
-	bool insertMemory(int a_location, int a_contents);
+	bool insertMemory(int a_location, int a_opcode, int a_value);
 
 	// Runs the VC3600 program recorded in memory.
 	bool runProgram();
 
 private:
-
 	int m_memory[MEMSZ];       // The memory of the VC3600.
 	int acceumulator;			// The accumulator for the VC3600
+	struct m_instruction {
+		int location;
+		int value;
+		int opcode;
+		int value;
+	};
+	vector <m_instruction> m_instructionList;
 };
 
 #endif

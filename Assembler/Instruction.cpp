@@ -92,14 +92,14 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	}
 
 	m_instruction = a_buff;
-	string segment = ""; //storage for the single phrases/words within the buffer
+	string segment = m_instruction; //storage for the single phrases/words within the buffer
 	int count = 1; //count for each loop iteration [assuming 3 (w/o end comments)]
-
+	
 	//store each relevant segment on the line (parse out comments)
-	std::istringstream singleOut(m_instruction);
+	parseOutComment(segment);
+	std::istringstream singleOut(segment);
 	vector <string> lineSegment;
 	while (singleOut >> segment) {
-		parseOutComment(segment);
 
 		//parsed out comments, therefore possibility of "emptiness" :: comments at end will no longer be within the line
 		if (!segment.empty()) lineSegment.push_back(segment);
@@ -416,20 +416,20 @@ bool Instruction::isValidLabel(const string &a_segment) {
 ##################################################################*/
 void Instruction::assemSyntaxCheck() {
 	if (!m_OpCode.empty()) {
-		string segment = "";
-		transform(m_OpCode.begin(), m_OpCode.end(), m_OpCode.begin(), toupper);
+		string segment = m_OpCode;
+		transform(segment.begin(), segment.end(), segment.begin(), toupper);
 		auto it = m_AssemList.find(segment);
 		if (it != m_AssemList.end()) {
 			switch (it->second) {
 
 				// ORG instructions cannot have a Label, *must* have NUMERICAL OPERAND
-			AT_ORG:
+			case Instruction::AT_ORG:
 				if (isLabel()) Errors::RecordError(Errors::createError("cannot have a label on the Assembly Instruction \"" + m_OpCode + "\""));
 				break;
 
 				// Require labels on DC, DS as well as NUMERICAL OPERANDS
-			AT_DC:
-			AT_DS:
+			case Instruction::AT_DC:
+			case Instruction::AT_DS:
 				if (isLabel()) Errors::RecordError(Errors::createError("Assembly Instructions \"" + m_OpCode + "\"require labels."));
 				break;
 			default:
@@ -477,12 +477,12 @@ void Instruction::assemSyntaxCheck() {
 ##################################################################*/
 void Instruction::machSyntaxCheck() {
 	if (!m_OpCode.empty()) {
-		string segment = "";
-		transform(m_OpCode.begin(), m_OpCode.end(), m_OpCode.begin(), toupper);
+		string segment = m_OpCode;
+		transform(segment.begin(), segment.end(), segment.begin(), toupper);
 		auto it = m_MachList.find(segment);
 		if (it != m_MachList.end()) {
 			switch (it->second) {
-			MT_HALT:
+			case Instruction::MT_HALT:
 				if (isOperand()) Errors::RecordError(Errors::createError("operand not accepted on HALT machine instructions."));
 				return;
 			default:

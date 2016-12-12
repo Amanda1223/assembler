@@ -41,12 +41,11 @@ public:
 	// Run emulator on the translation.
 	void RunEmulator();
 
-	//#######################CONSTATNS################################
-	const int maxMemory = 9999;
-
 private:
+	//####################### FUNCTIONS #############################
+	void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type);
 
-	//#######################VARIABLES################################
+	//####################### VARIABLES #############################
 	FileAccess m_facc;	    // File Access object
 	SymbolTable m_symtab; // Symbol table object
 	Instruction m_inst;	    // Instruction object

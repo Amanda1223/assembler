@@ -12,6 +12,7 @@
 
 // Initialize the space for the static variables.
 vector<string> Errors::m_ErrorMsgs;
+int Errors::m_TotalErrors;
 
 /*##################################################################
 #	NAME
