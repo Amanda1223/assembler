@@ -39,6 +39,10 @@ public:
 	// Display the most recent error recorded
 	static string reportCurrentError();
 
+	static inline bool isError() {
+		return !m_ErrorMsgs.empty();
+	};
+
 private:
 	static int m_TotalErrors;
 	static vector <string> m_ErrorMsgs;

@@ -204,3 +204,23 @@ Error Reporting in Assembler & Instruction class. Still need:
     (3) Reporting an error if Constant is too large for VC 3600 memory (see e-mail conversation with Miller)
     (4) Replacing undefined operand's location/address as (insert value)
     (5) Replacing unknown operator as (insert value)
+
+12/12/2016
+	* Between yesterday and today, finished up error reporting.
+	* Translation was successful after a few attempts today, and finding specific cases to handle based upon Machine Language instruction or Assembly Language Instruction.
+	* Storing the information found within the assembler class into the emulator structure.
+	* Considering the private member functions of the emulator :
+		* 01 ADD
+		* 02 SUB
+		* 03 MULT
+		* 04 DIV
+		* 05 LOAD
+		* 06 STORE
+		* 07 READ
+		* 08 WRITE
+		* 09 B
+		* 10 BM
+		* 11 BZ
+		* 12 BP
+		* 13 HALT
+	* Switch statement seems necessary per instruction in the emulator.

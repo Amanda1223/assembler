@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	// Run the emulator on the VC3600 program that was generated in Pass II.
 	
 	/*
-	assem.RunProgramInEmulator();
+	assem.RunEmulator();
 	*/
 	
 

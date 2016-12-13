@@ -152,6 +152,7 @@ void Assembler::PassII() {
 			else Errors::RecordError(Errors::createError(loc, string("statement after assembly language END instruction.")));
 		}
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) {
+			cout << "location " << loc << " | operandloc " << operandLoc << " | opCodeNum " << m_inst.GetOpCodeNum() << endl;
 			TranslationOutput(loc, operandLoc, m_inst.GetOpCodeNum(), buff, st);
 			continue;
 		}
@@ -170,17 +171,14 @@ void Assembler::PassII() {
 				m_symtab.AddSymbol(m_inst.GetOperand(), m_symtab.undefinedSymbol);
 			}
 		}
-
-		// the location can also indicate out of memory issue. > MEMSZ
-		if (loc > emulator::MEMSZ) Errors::RecordError(Errors::createError(loc, "current location exceeds memory."));
 		TranslationOutput(loc, operandLoc, m_inst.GetOpCodeNum(), buff, st);
+		if (loc > emulator::MEMSZ) Errors::RecordError(Errors::createError(loc, "current location exceeds memory."));
+		
 		loc = m_inst.LocationNextInstruction(loc);
 
 		//PRINT ERRORS ON LINE HERE
 	}
 	system("pause");
-
-	//PRINT ERROR LIST HERE, IF ERRORS, DO NOT RUN THE EMULATOR.
 }
 /*void Assembler::PassII();*/
 
@@ -208,7 +206,15 @@ void Assembler::PassII() {
 #
 ##################################################################*/
 void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type) {
-	if (Instruction::ST_End == a_type || Instruction::ST_Comment == a_type) {
+	string contents = "";
+	Assembler::instInfo temp;
+	stringstream stream;
+	
+	if (Instruction::ST_Comment == a_type) {
+		cout << "\t\t\t   " << a_instruction << endl;
+		return;
+	}
+	if (Instruction::ST_End == a_type) {
 		cout << "\t\t\t   " << a_instruction << endl;
 		return;
 	}
@@ -223,10 +229,20 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 		}
 
 		//We will have some numerical value in the operand upon AL instructions
-		cout << "  " << a_instLocation << "\t\t" << setfill('0') << setw(2) << a_opCodeNum << setw(4) << m_inst.GetOperandVal() << "\t   " << a_instruction << endl;
-		return;
+		stream.str(string());
+		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << m_inst.GetOperandVal();
+		contents = stream.str();
 	}
-	cout << "  " << a_instLocation << "\t\t" << setfill('0') << setw(2) << a_opCodeNum << setw(4) << a_operandLocation << "\t   " << a_instruction << endl;
+	else {
+		stream.str(string());
+		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << a_operandLocation;
+		contents = stream.str();
+
+	}
+	temp.contents = stoi(contents);
+	temp.location = int(a_instLocation);
+	cout << "  " << a_instLocation << "\t\t" << contents << "\t   " << a_instruction << endl;
+	Assembler::m_instructions.push_back(temp);
 	return;
 }
 /*void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type);*/
@@ -248,5 +264,23 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 ##################################################################*/
 void Assembler::RunEmulator() {
 
+	// PRINT ERROR LIST HERE, IF ERRORS, DO NOT RUN THE EMULATOR.
+	if (Errors::isError()) {
+		Errors::DisplayErrors();
+	}
+	else {
+	
+		// If there are no errors, pass all the required information to the emulator class.
+		for (auto it = Assembler::m_instructions.begin(); it != Assembler::m_instructions.end(); ++it) {
+			if (Assembler::m_emul.insertMemory(it->location, it->contents)) continue;
+			else {
+				Errors::RecordError(string("out of memory."));
+				cout << Errors::reportCurrentError();
+				exit(1);
+			}
+		}
+	}
+
+	//emulator::runProgram();
 }
 /*void Assembler::RunEmulator();*/

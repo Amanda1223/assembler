@@ -41,6 +41,11 @@ public:
 	// Run emulator on the translation.
 	void RunEmulator();
 
+	struct instInfo {
+		int location;
+		int contents;
+	};
+
 private:
 	//####################### FUNCTIONS #############################
 	void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type);
@@ -50,4 +55,5 @@ private:
 	SymbolTable m_symtab; // Symbol table object
 	Instruction m_inst;	    // Instruction object
 	emulator m_emul;        // Emulator object
+	vector <instInfo> m_instructions;
 };
