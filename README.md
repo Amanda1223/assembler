@@ -13,3 +13,6 @@ Error-checking code has not been extensively tested, therefore not all bugs have
 
 ##Emulator :: (in the works as of 12/12/2016)
 Working on PassII branch for emulation.
+
+###Disclaimer :: Emulator
+In order for the emulation to work, it assumes there is an ORG instruction as the first memory location, to find the starting location of where to begin reading from the VC 3600 memory.
