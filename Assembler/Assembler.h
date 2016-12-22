@@ -1,19 +1,10 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
-//Current File	:			Assembler.h
-//###################################################################
+//Current File	:			Assembler.h	::	Contains everything being used within the Assembler.cpp
 
 
-
-#pragma once
-//
-//		Assembler class.  This is a container for all the components
-//		that make up the assembler.
-//
 #pragma once 
 
 #include "SymTab.h"
@@ -27,7 +18,6 @@ class Assembler {
 
 public:
 	Assembler(int argc, char *argv[]);
-	~Assembler();
 
 	// Pass I - establish the locations of the symbols
 	void PassI();
@@ -38,22 +28,23 @@ public:
 	// Display the symbols in the symbol table.
 	void DisplaySymbolTable() { m_symtab.DisplaySymbolTable(); }
 
-	// Run emulator on the translation.
+	// Run Emulator on the translation.
 	void RunEmulator();
 
-	struct instInfo {
+	// Structure that can information the Emulator will need.
+	struct InstructionInfo {
 		int location;
 		int contents;
 	};
 
 private:
-	//####################### FUNCTIONS #############################
-	void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type);
+	
+	// Output details of the line to the user, as well as the instruction itself.
+	void TranslationOutput(int a_instLocation, int a_operandLocation, int a_opCodeNum, string a_instruction, Instruction::InstructionType a_type);
 
-	//####################### VARIABLES #############################
 	FileAccess m_facc;	    // File Access object
 	SymbolTable m_symtab; // Symbol table object
 	Instruction m_inst;	    // Instruction object
-	emulator m_emul;        // Emulator object
-	vector <instInfo> m_instructions;
+	Emulator m_emul;        // Emulator object
+	vector <InstructionInfo> m_instructions;	// Vector of instruction information
 };

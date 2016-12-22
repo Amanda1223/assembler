@@ -1,39 +1,41 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
 //Current File	:			FileAccess.cpp
-//###################################################################
+
+/*
+* Current File	:	Assembler.cpp
+* Description	:	Accesses a file and allows to parsing through the line as well
+*					as restarting reading from the file.
+*/
 
 
-
-//
-//  Implementation of file access class.
-//
 #include "stdafx.h"
 #include "FileAccess.h"
 
-/*##################################################################
-#	NAME
-#		FileAccess::FileAccess
-#
-#	SYNOPSIS
-#		FileAccess::FileAccess(int argc, char *argv[]);
-#
-#			argc	--> number of arguments within the command line
-#			argv	-->	file name input by the user
-#
-#	DESCRIPTION
-#		This constructor attempts to open the file from a command
-#		line argument. If it could not be opened or if the file does
-#		not exist, it will exit the program.
-#
-#	RETURNS
-#		((none))
-#
-##################################################################*/
+/**/
+/*
+		FileAccess::FileAccess() FileAccess::FileAccess()
+	NAME
+		FileAccess::FileAccess
+
+	SYNOPSIS
+		FileAccess::FileAccess(int argc, char *argv[]);
+
+			argc	--> number of arguments within the command line
+			argv	-->	file name input by the user
+
+	DESCRIPTION
+		This constructor attempts to open the file from a command
+		line argument. If it could not be opened or if the file does
+		not exist, it will exit the program.
+
+	RETURNS
+		((none))
+
+*/
+/**/
 FileAccess::FileAccess(int argc, char *argv[])
 {
 	// Check that there is exactly one run time parameter.
@@ -54,46 +56,50 @@ FileAccess::FileAccess(int argc, char *argv[])
 }
 /*FileAccess::FileAccess(int argc, char *argv[]);*/
 
+/**/
+/*
+		FileAccess::~FileAccess() FileAccess::~FileAccess()
+	NAME
+		FileAccess::~FileAccess
 
-/*##################################################################
-#	NAME
-#		FileAccess::~FileAccess
-#
-#	SYNOPSIS
-#		FileAccess::~FileAccess();
-#
-#	DESCRIPTION
-#		This deconstructor closes the open file
-#
-#	RETURNS
-#		((none))
-#
-##################################################################*/
+	SYNOPSIS
+		FileAccess::~FileAccess();
+
+	DESCRIPTION
+		This deconstructor closes the open file
+
+	RETURNS
+		((none))
+
+*/
+/**/
 FileAccess::~FileAccess()
 {
 	m_sfile.close();
 }
 /*FileAccess::~FileAccess()*/
 
+/**/
+/*
+		FileAccess::GetNextLine() FileAccess::GetNextLine()
+	NAME
+		FileAccess::GetNextLine
 
-/*##################################################################
-#	NAME
-#		FileAccess::GetNextLine
-#
-#	SYNOPSIS
-#		bool FileAccess::GetNextLine(string &a_buff);
-#
-#			a_buff	--> a single line within the file that was opened.
-#
-#	DESCRIPTION
-#		This function attempts to read a line from the open file,
-#		if it is at the end of the file then nothing will be read in.
-#
-#	RETURNS
-#		Returns true indicating success, and false if there
-#		is no more data in the file.
-#
-##################################################################*/
+	SYNOPSIS
+		bool FileAccess::GetNextLine(string &a_buff);
+
+			a_buff	--> a single line within the file that was opened.
+
+	DESCRIPTION
+		This function attempts to read a line from the open file,
+		if it is at the end of the file then nothing will be read in.
+
+	RETURNS
+		Returns true indicating success, and false if there
+		is no more data in the file.
+
+*/
+/**/
 bool FileAccess::GetNextLine(string &a_buff)
 {
 	//Reached end-of-file | there's no more data to be read
@@ -108,24 +114,28 @@ bool FileAccess::GetNextLine(string &a_buff)
 /*bool FileAccess::GetNextLine(string &a_buff);*/
 
 
-/*##################################################################
-#	NAME
-#		FileAccess::rewind
-#
-#	SYNOPSIS
-#		void FileAccess::rewind();
-#
-#	DESCRIPTION
-#		This function
-#
-#	RETURNS
-#		((void))
-#
-##################################################################*/
-void FileAccess::rewind()
+/**/
+/*
+		FileAccess::Rewind() FileAccess::Rewind()
+	NAME
+		FileAccess::Rewind
+
+	SYNOPSIS
+		void FileAccess::Rewind();
+
+	DESCRIPTION
+		This function clears the flag for file searching, and
+		sends it back to the beginning of the file.
+
+	RETURNS
+		((void))
+
+*/
+/**/
+void FileAccess::Rewind()
 {
 	// Clean tall file flags and go back to the beginning of the file.
 	m_sfile.clear();
 	m_sfile.seekg(0, ios::beg);
 }
-/*void FileAccess::rewind()*/
+/*void FileAccess::Rewind()*/

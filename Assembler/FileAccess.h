@@ -1,24 +1,14 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
 //Current File	:			FileAccess.h
-//###################################################################
-
 
 
 #pragma once
-//
-//		File access to source file.
-//
-#ifndef _FILEACCESS_H  // This is the way that multiple inclusions are defended against often used in UNIX
-#define _FILEACCESS_H // We use pramas in Visual Studio.  See other include files
 
-#include <fstream>
-#include <stdlib.h>
-#include <string>
+#ifndef _FILEACCESS_H
+#define _FILEACCESS_H
 
 class FileAccess {
 
@@ -34,7 +24,7 @@ public:
 	bool GetNextLine(string &a_buff);
 
 	// Put the file pointer back to the beginning of the file.
-	void rewind();
+	void Rewind();
 
 private:
 

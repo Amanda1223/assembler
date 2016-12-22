@@ -1,11 +1,8 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
-//Current File	:			stdafx.h
-//###################################################################
+//Current File	:			stdafx.h	::	All the include files being used throughout the files
 
 
 
@@ -18,22 +15,20 @@
 
 //#include "targetver.h"
 
-
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <stdio.h>
-#include <tchar.h>
-
-
-
-// TODO: reference additional headers your program requires here
-// Standard include files.
-#include <stdio.h>
+#define WIN32_LEAN_AND_MEAN
+#include <algorithm>
+#include <iomanip>
 #include <iostream>
+#include <fstream>
+#include <map>
+#include <sstream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <windows.h>
-#include <map>
+#include <tchar.h>
 #include <unordered_map>
-#include <iomanip>
+#include <vector>
+#include <windows.h>
+
 
 using namespace std;

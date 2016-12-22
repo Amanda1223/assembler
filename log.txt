@@ -213,14 +213,31 @@ Error Reporting in Assembler & Instruction class. Still need:
 		* 01 ADD
 		* 02 SUB
 		* 03 MULT
-		* 04 DIV
+		* 04 DIV		:: check division by zero
 		* 05 LOAD
 		* 06 STORE
-		* 07 READ
+		* 07 READ		:: check if an integer entered 
 		* 08 WRITE
-		* 09 B
+		* 09 B			:: valid addresses were checked _before_ entering the emulation, shouldn't be a problem.
 		* 10 BM
 		* 11 BZ
 		* 12 BP
-		* 13 HALT
+		* 13 HALT		:: output a little success message, will go back to main. (assem.cpp)
 	* Switch statement seems necessary per instruction in the emulator.
+	* Finished the basic code for emulation, made functions for _each_ function mentioned above. Might be excessive because they're all short, however, it makes the code less intimidating.
+	* REQUIRED :: 
+		* Emulation Testing - required, clearly only need to test _working_ .txt files.
+		* Coding Standards, especially in the emulator.cpp; currently has no comments above the classes.
+		* Fix the Coding Standards on the other functions before the "Name" header. (supposed to have the name of the function twice)
+		* Add Copyright footers at the bottom of each class / header file.
+12/13/2016
+	Working code completed :: move functions in the emulat
+
+12/22/2016
+	* Commenting code
+		* Assembler.cpp
+	* Changed casing on variables & functions
+	* Moved the #include<vector> out of Errors.h and put it in stdafx.h
+	* Deleted duplicate includes in stdafx, added includes from FileAccess, while removing those that were already within the stdafx.h
+	* BUG :: does not handle when a label is on the HALT instruction
+	* Assumption :: Assumes the numerical values taken by the DC/DS instructions are positive, however, handles negative input...

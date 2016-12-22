@@ -1,28 +1,15 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
-//Current File	:			SymTab.h
-//###################################################################
+//Current File	:			SymTab.h	::	Displaying and keeping track of a symbol table stored in a vector.
 
 
-
-//
-//		Symbol table class.
-//
 #pragma once
 
-
-
-// This class is our symbol table.
 class SymbolTable {
 
 public:
-	// Get rid of constructor and destructor if you don't need them.
-	SymbolTable() {};
-	~SymbolTable() {};
 
 	const int multiplyDefinedSymbol = -999;
 	const int undefinedSymbol = -990;

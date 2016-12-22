@@ -10,9 +10,7 @@
 
 
 #pragma once
-#include <sstream>
-#include <algorithm>
-#include <vector>
+
 #include "Errors.h"
 //
 // Class to parse and provide information about instructions.  Note: you will be adding more functionality.
@@ -25,10 +23,7 @@ public:
 	//initialize all member variables
 	Instruction();
 
-	~Instruction() { };
 
-	// Codes to indicate the type of instruction we are processing.  Why is this inside the
-	// class?
 	enum InstructionType {
 		ST_MachineLanguage,
 		ST_AssemblerInstr,
@@ -60,9 +55,9 @@ public:
 	};
 
 	//#######################CONSTANTS##############################
-	const int maxValue = 999999;
-	const int unknownOpcodeNum = 99;
-	const string unknownOpcode = "??";
+	const int m_MAX_VALUE = 999999;
+	const int m_MISSING_OPCODE = 99;
+	const string m_STR_UNKNOWN_OP = "??";
 
 	// Parse the Instruction.
 	InstructionType ParseInstruction(string &a_buff);
@@ -73,43 +68,43 @@ public:
 	//#######################LABEL##############################
 	// String :: access the label
 	inline string &GetLabel() {
-		return m_Label;
+		return m_label;
 	};
 
 	// Boolean :: determine if a label is blank.
 	inline bool isLabel() {
-		return !m_Label.empty();
+		return !m_label.empty();
 	};
 
 	//#######################OP-CODE##############################
 	// Integer :: access numerical opcode
 	inline int GetOpCodeNum() {
-		return m_NumOpCode;
+		return m_opCodeNum;
 	};
 
 	// String  :: access opcode literal value
 	inline string GetOpCode() {
-		return m_OpCode;
+		return m_opCode;
 	};
 
 	//#######################OPERAND##############################
 	// String :: access operand (eol)
 	inline string GetOperand() {
-		return m_Operand;
+		return m_operand;
 	};
 
 	// Integer :: operand value
 	inline int GetOperandVal() {
-		return m_OperandValue;
+		return m_operandValue;
 	};
 
 	inline bool isNumericOperand() {
-		return m_IsNumericOperand;
+		return m_isNumericOperand;
 	};
 
 	//Bool :: is there an operand
 	inline bool isOperand() {
-		return !m_Operand.empty();
+		return !m_operand.empty();
 	};
 
 	
@@ -123,10 +118,10 @@ private:
 	bool isMachineInstruct(const string &a_segment);
 
 	//checking if there is a comment on the line and parsing it out.
-	void parseOutComment(string &a_section);
+	void ParseOutComment(string &a_section);
 
 	//clearing the member variables of the class, useful for parsing line by line.
-	void clearInfo();
+	void ClearInfo();
 
 	//function to detect if a string contains only an INTEGER value
 	bool isNumeric(const string &a_segment);
@@ -135,10 +130,13 @@ private:
 	bool isValidLabel(const string &a_segment);
 
 	// function to validate if the proper syntax was used in an assembly line instruction
-	void assemSyntaxCheck();
+	void AssemSyntaxCheck();
 
 	// function to validate if the proper syntax was used in a machine line instruction
-	void machSyntaxCheck();
+	void MachSyntaxCheck();
+
+	// function to validate if first is alphabetical and the rest is alphanumeric
+	bool isAlphaNumeric(const string &a_segment);
 
 	//##############################  MEMBER VARIABLES  ##############################
 	const unordered_map <string, MachineOpCode> m_MachList = { //list of machine codes / string equiv
@@ -165,16 +163,16 @@ private:
 	}; 
 
 	// The elemements of an instruction
-	string m_Label;        // The label.
-	string m_OpCode;       // The symbolic op code.
-	string m_Operand;      // The operand.
+	string m_label;        // The label.
+	string m_opCode;       // The symbolic op code.
+	string m_operand;      // The operand.
 
 	string m_instruction;    // The original instruction.
 
 	// Derived values.
-	int m_NumOpCode;     // The numerical value of the op code.
+	int m_opCodeNum;     // The numerical value of the op code.
 	InstructionType m_type; // The type of instruction.
 
-	bool m_IsNumericOperand;// == true if the operand is numeric. :: will have to check this specifically in pass II for errors
-	int m_OperandValue;   // The value of the operand if it is numeric.
+	bool m_isNumericOperand;// == true if the operand is numeric. :: will have to check this specifically in pass II for errors
+	int m_operandValue;   // The value of the operand if it is numeric.
 };

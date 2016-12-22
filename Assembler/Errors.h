@@ -1,23 +1,12 @@
-//###################################################################
 //Name		:	Amanda Steidl
 //Course	:	CMPS361 - Software Design
 //Project	:	Assembler
 //Instructor:	Professor Victor Miller
-//###################################################################
-//Current File	:			Errors.h
-//###################################################################
+//Current File	:			Errors.h	::	Initialize storage for errors as well as the display feature.
 
 
-
-//
-// Class to manage error reporting. Note: all members are static so we can access them anywhere.
-// What other choices do we have to accomplish the same thing?
-//
 #ifndef _ERRORS_H
 #define _ERRORS_H
-
-#include <string>
-#include <vector>
 
 class Errors {
 
@@ -33,18 +22,19 @@ public:
 	static void DisplayErrors();
 
 	// Detailing the messages
-	static string createError( int a_loc, const string &a_errMsg );
-	static string createError(const string &a_errMsg);
+	static string CreateError( int a_loc, const string &a_errMsg );
+	static string CreateError(const string &a_errMsg);
 
 	// Display the most recent error recorded
-	static string reportCurrentError();
+	static string ReportCurrentError();
 
+	// Checks if the Error array is empty or not
 	static inline bool isError() {
-		return !m_ErrorMsgs.empty();
+		return !m_errors.empty();
 	};
 
 private:
-	static int m_TotalErrors;
-	static vector <string> m_ErrorMsgs;
+	static int m_totalErrors; 
+	static vector <string> m_errors;
 };
 #endif
