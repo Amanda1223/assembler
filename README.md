@@ -18,5 +18,5 @@ Working on PassII branch for emulation.
 * In order for the emulation to work, it assumes there is an ORG instruction as the first memory location, to find the starting location of where to begin reading from the VC 3600 memory.
 * Accepts negative integer as input *without* spacing between the hyphen and the numerical value : -59 _not_ - 59
 * Assumptions :
-⋅⋅* Any value following a DC/DS Assembly Lanugae operation, is assumed to be a positive value. There is checking for digit values though.
-⋅⋅* NO labels accepted on HALT commands.
+1. Any value following a DC/DS Assembly Lanugae operation, is assumed to be a positive value. There is checking for digit values though.
+2. NO labels accepted on HALT commands.
