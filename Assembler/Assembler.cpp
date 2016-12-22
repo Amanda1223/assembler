@@ -142,8 +142,11 @@ void Assembler::PassII() {
 		// Parse through the instructions, determining what to do based on Instruction type
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 		if (st == Instruction::ST_End) {
-			if (m_facc.GetNextLine(buff)) Errors::RecordError(Errors::CreateError(loc, string("statement after assembly language END instruction.")));
-			Errors::ReportCurrentError();
+			if (m_facc.GetNextLine(buff)) {
+				Errors::RecordError(Errors::CreateError(loc, string("statement after assembly language END instruction.")));
+				Errors::ReportCurrentError();
+			}
+			return;
 		}
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) {
 			TranslationOutput(loc, operandLoc, m_inst.GetOpCodeNum(), buff, st);
@@ -209,7 +212,7 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 	string contents = "";
 	Assembler::InstructionInfo temp;
 	stringstream stream;
-	int operandInfo = a_operandLocation;
+
 	
 	// If it is just a Comment or an END statement we can output the contents right away.
 	if (Instruction::ST_Comment == a_type) {
@@ -239,12 +242,16 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 		}
 
 		// If it was AL :: numerical value expected at this point, replace the location remark with the value.
-		operandInfo = m_inst.GetOperandVal();
+		stream.str(string());
+		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << m_inst.GetOperandVal();
+		contents = stream.str();
 	}
-	
-	stream.str(string());
-	stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << operandInfo;
-	contents = stream.str();
+	else {
+		stream.str(string());
+		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << a_operandLocation;
+		contents = stream.str();
+		
+	}
 
 	// Fill the information for the line into our instruction vector to be passed to the Emulator if no errors.
 	temp.contents = stoi(contents);
@@ -277,6 +284,7 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 void Assembler::RunEmulator() {
 	if (Errors::isError()) {
 		Errors::DisplayErrors();
+		return;
 	}
 	else {
 	

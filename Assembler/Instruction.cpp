@@ -151,7 +151,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			isValidLabel(m_operand);
 
 			// Checking for alphanumerical characters
-			if (!(m_isNumericOperand = isAlphaNumeric(m_operand))) {
+			if (m_isNumericOperand = (!isAlphaNumeric(m_operand))) {
 				Errors::RecordError(Errors::CreateError("illegal use of numerical operand \"" + m_operand + "\" on Machine Language operation."));
 			}
 			continue;
