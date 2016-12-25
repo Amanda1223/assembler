@@ -76,7 +76,7 @@ void SymbolTable::AddSymbol(string &a_symbol, int a_loc) {
 /**/
 void SymbolTable::DisplaySymbolTable() {
 	int symNum = 0;
-	printf("Symbol \tSymbol\tLocation\n");
+	printf("Symbol # \tSymbol\tLocation\n");
 	for ( auto it = m_symbolTable.begin(); it != m_symbolTable.end(); ++it, ++symNum) {
 		cout << symNum << "\t\t " << it->first << "\t " << it->second << endl;
 	}
