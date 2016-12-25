@@ -212,6 +212,7 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 	string contents = "";
 	Assembler::InstructionInfo temp;
 	stringstream stream;
+	int location= a_operandLocation;
 
 	
 	// If it is just a Comment or an END statement we can output the contents right away.
@@ -242,16 +243,12 @@ void Assembler::TranslationOutput(int a_instLocation, int a_operandLocation, int
 		}
 
 		// If it was AL :: numerical value expected at this point, replace the location remark with the value.
-		stream.str(string());
-		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << m_inst.GetOperandVal();
-		contents = stream.str();
+		location =  m_inst.GetOperandVal();
 	}
-	else {
-		stream.str(string());
-		stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << a_operandLocation;
-		contents = stream.str();
-		
-	}
+	stream.str(string());
+	stream << setfill('0') << setw(2) << a_opCodeNum << setw(4) << location;
+	contents = stream.str();
+
 
 	// Fill the information for the line into our instruction vector to be passed to the Emulator if no errors.
 	temp.contents = stoi(contents);
